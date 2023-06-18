@@ -63,8 +63,7 @@ export const POLYGONSCAN_URL = IS_MAINNET
   : 'https://mumbai.polygonscan.com'
 export const POLYGON_CHAIN_ID = IS_MAINNET ? 137 : 80001
 
-// ipfs
-export const IPFS_FREE_UPLOAD_LIMIT = IS_MAINNET ? 5000 : 100 // in MB
+
 export const IPFS_GATEWAY_URL = 'https://gateway.ipfscdn.io/ipfs'
 export const EVER_ENDPOINT = 'https://endpoint.4everland.co'
 export const EVER_REGION = 'us-west-2'
@@ -92,6 +91,7 @@ export const REQUESTING_SIGNATURE_MESSAGE = 'Requesting signature...'
 export const ERROR_MESSAGE = 'Oops, something went wrong!'
 
 // App Ids
+export const LENSTER_APP_ID = 'Lenster'
 export const OPTREE_APP_ID = 'optree'
 export const ALLOWED_APP_IDS = ['orb', 'lenster', 'buttrfly']
 
@@ -109,7 +109,10 @@ export const OPTREE_DONATION_ADDRESS = ''
 
 // lens
 export const LENS_CUSTOM_FILTERS = []
-
+export const ALLOWED_IMAGE_TYPES = [
+  'image/png',
+  'image/jpeg',
+]
 // i18n
 export const SUPPORTED_LOCALES: Record<string, string> = {
   en: 'English'
@@ -126,7 +129,7 @@ export const OPENSEA_MARKETPLACE_URL = IS_MAINNET
 export const RARIBLE_MARKETPLACE_URL = IS_MAINNET
   ? 'https://rarible.com'
   : 'https://testnet.rarible.com'
-
+  
 // analytics
 export const MIXPANEL_API_HOST = '/collect'
 export const MIXPANEL_TOKEN = ''
@@ -137,3 +140,9 @@ export const GIT_DEPLOYED_COMMIT_SHA =
   process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
 export const GIT_DEPLOYED_BRANCH = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF
 export const VERCEL_DEPLOYED_ENV = process.env.NEXT_PUBLIC_VERCEL_ENV
+
+export const WMATIC_TOKEN_ADDRESS = IS_MAINNET
+  ? '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'
+  : '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889'
+
+export const OPTREE_PROXY_ADDRESS = '0xE5eC5849CfdB380e469529AebBc04b1fE20CBEBc'

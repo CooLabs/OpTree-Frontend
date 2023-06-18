@@ -24,8 +24,8 @@ const EmojiPicker: FC<Props> = ({ onEmojiSelect }) => {
   const { resolvedTheme } = useTheme()
 
   const fetchEmojiData = async () => {
-    const response = await axios.get(`${STATIC_ASSETS}/data/emoji.json`)
-    setData(response.data)
+    // const response = await axios.get(`${STATIC_ASSETS}/data/emoji.json`)
+    // setData(response.data)
   }
 
   useEffect(() => {

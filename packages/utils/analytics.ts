@@ -78,5 +78,9 @@ export const TRACK = {
   PAGE_VIEW: {
     HOME: 'Home Page',
     EXPLORE: 'Explore Page',
+    UPLOAD: {
+      STEPS: 'Steps',
+      DROPZONE: 'Drop Zone'
+    }
   }
 }

@@ -1,13 +1,11 @@
 {
   "name": "OpTree",
-  "description": "Decentralized video-sharing social media platform.",
-  "version": "1.0.3-beta",
+  "description": "",
+  "version": "1.0.0-beta",
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "packages/workers/*",
-    "tests"
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo run build --parallel",
@@ -17,7 +15,6 @@
     "lint": "turbo run lint --parallel",
     "typecheck": "turbo run typecheck --parallel",
     "prepare": "husky install",
-    "workers:deploy": "turbo run worker:deploy --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "dev:test": "turbo run dev:test",
     "e2e:test": "start-server-and-test start 8888 dev:test",

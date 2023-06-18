@@ -1333,7 +1333,7 @@ msgid "Video deleted"
 msgstr "Video deleted"
 
 #: src/components/Upload/DropZone.tsx:51
-msgid "Video format not supported"
+msgid "Image format not supported"
 msgstr ""
 
 #: src/components/Upload/UploadSteps.tsx:483

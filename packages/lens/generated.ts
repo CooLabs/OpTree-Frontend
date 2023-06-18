@@ -16403,7 +16403,7 @@ export const GlobalProtocolStatsDocument = gql`
         value
       }
     }
-    bytesStats: globalProtocolStats(request: { sources: "optree-bytes" }) {
+    bytesStats: globalProtocolStats(request: { sources: "lenstube-bytes" }) {
       totalPosts
     }
   }

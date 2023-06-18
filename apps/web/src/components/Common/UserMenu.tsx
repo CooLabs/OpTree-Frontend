@@ -1,19 +1,16 @@
-import DropMenu, { NextLink } from '@components/UIElements/DropMenu'
-import { Menu } from '@headlessui/react'
-import useAuthPersistStore, { signOut } from '@lib/store/auth'
+import DropMenu from '@components/UIElements/DropMenu'
+import { signOut } from '@lib/store/auth'
 import useChannelStore from '@lib/store/channel'
 import { t, Trans } from '@lingui/macro'
 import clsx from 'clsx'
 import type { Profile } from 'lens'
-import { useAllProfilesLazyQuery } from 'lens'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import React, { useState } from 'react'
+import React from 'react'
 import { toast } from 'react-hot-toast'
 import useSWR from 'swr'
 import type { CustomErrorWithData } from 'utils'
 import {
-  ADMIN_IDS,
   Analytics,
   HEALTH_URL,
   IS_MAINNET,
@@ -21,74 +18,30 @@ import {
   TRACK
 } from 'utils'
 import getProfilePicture from 'utils/functions/getProfilePicture'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useDisconnect } from 'wagmi'
 
-import ChannelOutline from './Icons/ChannelOutline'
-import CheckOutline from './Icons/CheckOutline'
-import ChevronLeftOutline from './Icons/ChevronLeftOutline'
-import CogOutline from './Icons/CogOutline'
-import GraphOutline from './Icons/GraphOutline'
 import HandWaveOutline from './Icons/HandWaveOutline'
 import MoonOutline from './Icons/MoonOutline'
-import PlusOutline from './Icons/PlusOutline'
 import SunOutline from './Icons/SunOutline'
-import SwitchChannelOutline from './Icons/SwitchChannelOutline'
 
 const UserMenu = () => {
   const { theme, setTheme } = useTheme()
-  const [showAccountSwitcher, setShowAccountSwitcher] = useState(false)
 
-  const setChannels = useChannelStore((state) => state.setChannels)
-  const setShowCreateChannel = useChannelStore(
-    (state) => state.setShowCreateChannel
-  )
-  const channels = useChannelStore((state) => state.channels)
-  const setSelectedChannel = useChannelStore(
-    (state) => state.setSelectedChannel
-  )
   const selectedChannel = useChannelStore(
     (state) => state.selectedChannel as Profile
   )
-  const setSelectedChannelId = useAuthPersistStore(
-    (state) => state.setSelectedChannelId
-  )
-
+  
   const { data: statusData } = useSWR(
     IS_MAINNET ? HEALTH_URL : null,
     (url: string) => fetch(url).then((res) => res.json()),
     { revalidateOnFocus: true }
   )
-
-  const [getChannels] = useAllProfilesLazyQuery()
-  const { address } = useAccount()
   const { disconnect } = useDisconnect({
     onError(error: CustomErrorWithData) {
       toast.error(error?.data?.message || error?.message)
     }
   })
 
-  const isAdmin = ADMIN_IDS.includes(selectedChannel?.id)
-
-  const onSelectChannel = (channel: Profile) => {
-    setSelectedChannel(channel)
-    setSelectedChannelId(channel.id)
-    setShowAccountSwitcher(false)
-    Analytics.track(TRACK.CHANNEL.SWITCH)
-  }
-
-  const onSelectSwitchChannel = async () => {
-    try {
-      setShowAccountSwitcher(true)
-      const { data } = await getChannels({
-        variables: {
-          request: { ownedBy: [address] }
-        },
-        fetchPolicy: 'no-cache'
-      })
-      const allChannels = data?.profiles?.items as Profile[]
-      setChannels(allChannels)
-    } catch {}
-  }
 
   return (
     <DropMenu

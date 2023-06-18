@@ -22,7 +22,6 @@ import { ThemeProvider, useTheme } from 'next-themes'
 import type { ReactNode } from 'react'
 import React, { useEffect } from 'react'
 import { IS_MAINNET, OPTREE_APP_NAME, POLYGON_RPC_URL } from 'utils'
-import { getLivepeerClient, videoPlayerTheme } from 'utils/functions/livepeer'
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
 import { polygon, polygonMumbai } from 'wagmi/chains'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -91,8 +90,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <I18nProvider i18n={i18n}>
       <ErrorBoundary>
-        <LivepeerConfig client={getLivepeerClient()} theme={videoPlayerTheme}>
-          <WagmiConfig client={wagmiClient}>
+        <WagmiConfig client={wagmiClient}>
             <ThemeProvider defaultTheme="light" attribute="class">
               <RainbowKitProviderWrapper>
                 <ApolloProvider client={apolloClient}>
@@ -100,8 +98,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
                 </ApolloProvider>
               </RainbowKitProviderWrapper>
             </ThemeProvider>
-          </WagmiConfig>
-        </LivepeerConfig>
+          </WagmiConfig> 
       </ErrorBoundary>
     </I18nProvider>
   )

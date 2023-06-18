@@ -21,6 +21,12 @@ const httpLink = new HttpLink({
   fetch
 })
 
+const apiLink = new HttpLink({
+  uri: 'https://api.studio.thegraph.com/query/45480/optree-subgraph-testnet/v0.0.1',
+  fetchOptions: 'no-cors',
+  fetch
+})
+
 const apolloClient = new ApolloClient({
   link: from([authLink, retryLink, httpLink]),
   cache

@@ -59,27 +59,25 @@ export type ReferenceModuleType = {
   } | null
 }
 
-export type UploadedVideo = {
+export type UploadedImage = {
   stream: FileReaderStreamType | null
   preview: string
-  videoType: string
+  imageType: string
   file: File | null
   title: string
   description: string
   thumbnail: string
   thumbnailType: string
-  videoCategory: { tag: string; name: string }
+  imageCategory: { tag: string; name: string }
   percent: number
   isSensitiveContent: boolean
-  isUploadToIpfs: boolean
   loading: boolean
   uploadingThumbnail: boolean
-  videoSource: string
+  imageSource: string
   buttonText: string
   durationInSeconds: string | null
   collectModule: CollectModuleType
   referenceModule: ReferenceModuleType
-  isByteVideo: boolean
 }
 
 export type IPFSUploadResult = {
