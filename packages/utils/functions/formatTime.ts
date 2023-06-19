@@ -34,6 +34,10 @@ export const getTimeAddedOneDay = () => {
   return dayjs().add(1, 'day').utc().format()
 }
 
+export const getTimeAddedOneDayTime = () => {
+  return  Math.floor(dayjs().add(1, 'day').toDate().getTime() / 1000)
+}
+
 export const secondsToISO = (seconds: string | undefined) => {
   const SECONDS_PER_SECOND = 1
   const SECONDS_PER_MINUTE = 60

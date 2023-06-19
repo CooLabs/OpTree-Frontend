@@ -25,6 +25,7 @@ export const UPLOADED_IMAGE_FORM_DEFAULTS = {
   preview: '',
   imageType: '',
   file: null,
+  royalty: 0,
   title: '',
   description: '',
   thumbnail: '',
@@ -40,7 +41,8 @@ export const UPLOADED_IMAGE_FORM_DEFAULTS = {
   collectModule: {
     type: 'revertCollectModule',
     followerOnlyCollect: false,
-    amount: { currency: WMATIC_TOKEN_ADDRESS, value: '' },
+    amount: '',
+    currency: WMATIC_TOKEN_ADDRESS,
     referralFee: 0,
     timeLimit: false,
     isFeeCollect: false,

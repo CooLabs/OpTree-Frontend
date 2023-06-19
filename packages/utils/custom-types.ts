@@ -40,7 +40,8 @@ export type CollectModuleType = {
   isSimpleCollect?: boolean
   isFeeCollect?: boolean
   isMultiRecipientFeeCollect?: boolean
-  amount?: { currency?: string; value: string }
+  currency?: string
+  amount?: string 
   referralFee?: number
   collectLimitEnabled?: boolean
   collectLimit?: string
@@ -63,6 +64,7 @@ export type UploadedImage = {
   stream: FileReaderStreamType | null
   preview: string
   imageType: string
+  royalty: number
   file: File | null
   title: string
   description: string

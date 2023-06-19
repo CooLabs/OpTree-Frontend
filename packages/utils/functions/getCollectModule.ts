@@ -8,6 +8,7 @@ export const getCollectModule = (
 ): CollectModuleParams => {
   const {
     amount,
+    currency,
     referralFee,
     collectLimit,
     followerOnlyCollect,
@@ -18,55 +19,24 @@ export const getCollectModule = (
     collectLimitEnabled
   } = selectedCollectModule
 
-  // No one can collect the post
-  if (selectedCollectModule.isRevertCollect) {
+  if (amount && currency) {
     return {
-      revertCollectModule: true
-    }
-  }
-
-  const baseCollectModuleParams = {
-    collectLimit: collectLimitEnabled ? collectLimit : null,
-    followerOnly: followerOnlyCollect as boolean,
-    endTimestamp: timeLimitEnabled ? getTimeAddedOneDay() : null
-  }
-  const baseAmountParams = {
-    amount: {
-      currency: amount?.currency,
-      value: amount?.value as string
-    },
-    referralFee: referralFee as number
-  }
-
-  if (selectedCollectModule.isSimpleCollect && !isMultiRecipientFeeCollect) {
-    return {
-      simpleCollectModule: {
-        ...baseCollectModuleParams,
-        ...(isFeeCollect && {
-          fee: {
-            ...baseAmountParams,
-            recipient
-          }
-        })
-      }
-    }
-  }
-
-  // Multi collect / revenue split
-  if (selectedCollectModule.isMultiRecipientFeeCollect) {
-    return {
-      multirecipientFeeCollectModule: {
-        ...baseAmountParams,
-        ...baseCollectModuleParams,
-        recipients:
-          selectedCollectModule.multiRecipients as RecipientDataInput[]
+      feeCollectModule: {
+        followerOnly: selectedCollectModule.followerOnlyCollect as boolean,
+        mintLimit: collectLimitEnabled&&collectLimit ? collectLimit : '10000',
+        endTime: timeLimitEnabled ? getTimeAddedOneDay() : null,
+        amount,
+        currency,
+        recipient
       }
     }
   }
   // Post is free to collect
   return {
     freeCollectModule: {
-      followerOnly: selectedCollectModule.followerOnlyCollect as boolean
+      followerOnly: selectedCollectModule.followerOnlyCollect as boolean,
+      mintLimit: collectLimitEnabled&&collectLimit ? collectLimit : '10000',
+      endTime: timeLimitEnabled ? getTimeAddedOneDay() : null
     }
   }
 }

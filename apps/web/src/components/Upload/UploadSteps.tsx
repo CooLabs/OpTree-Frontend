@@ -1,39 +1,28 @@
-import { OPTREE_PROXY_ABI } from '@abis/LensHubProxy'
+import { LENSHUB_PROXY_ABI, OPTREE_PROXY_ABI } from '@abis/LensHubProxy'
 import MetaTags from '@components/Common/MetaTags'
 import useAppStore, { UPLOADED_IMAGE_FORM_DEFAULTS } from '@lib/store'
 import useChannelStore from '@lib/store/channel'
-import usePersistStore from '@lib/store/persist'
 import { t } from '@lingui/macro'
-import { utils } from 'ethers'
-import type {
-  CreateDataAvailabilityPostRequest,
+import { ethers } from 'ethers'
+import {
   CreatePostBroadcastItemResult,
-  CreatePublicPostRequest,
   MetadataAttributeInput,
   PublicationMetadataMediaInput,
-  PublicationMetadataV2Input
-} from 'lens'
+  PublicationMetadataV2Input} from 'lens'
 import {
   PublicationMainFocus,
   ReferenceModules,
-  useBroadcastDataAvailabilityMutation,
-  useBroadcastMutation,
-  useCreateDataAvailabilityPostTypedDataMutation,
-  useCreateDataAvailabilityPostViaDispatcherMutation,
-  useCreatePostTypedDataMutation,
-  useCreatePostViaDispatcherMutation
-} from 'lens'
+  useBroadcastMutation} from 'lens'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast'
-import type { CustomErrorWithData } from 'utils'
+import { COLLECT_MODULE, CustomErrorWithData, FEE_DERIVIED_MODULE_ADDRESS, FREE_DERIVIED_MODULE_ADDRESS, LENS_HUB_ADDRESS, ZERO_ADDRESS } from 'utils'
 import {
   Analytics,
   BUNDLR_CONNECT_MESSAGE,
   ERROR_MESSAGE,
   OPTREE_PROXY_ADDRESS,
   LENSTER_APP_ID,
-  OPTREE_APP_NAME,
   OPTREE_WEBSITE_URL,
   REQUESTING_SIGNATURE_MESSAGE,
   TRACK
@@ -43,7 +32,6 @@ import getUserLocale from 'utils/functions/getUserLocale'
 import omitKey from 'utils/functions/omitKey'
 import trimify from 'utils/functions/trimify'
 import {storeBlob, storeCar} from 'utils/functions/uploadToStorage'
-import logger from 'utils/logger'
 import { v4 as uuidv4 } from 'uuid'
 import {
   useAccount,
@@ -54,17 +42,16 @@ import {
 
 import type { NFTFormData } from './Details'
 import Details from './Details'
+import { getTimeAddedOneDay, getTimeAddedOneDayTime } from 'utils/functions/formatTime'
 
 const UploadSteps = () => {
+  var abiCoder = new ethers.utils.AbiCoder() 
   const getBundlrInstance = useAppStore((state) => state.getBundlrInstance)
   const setBundlrData = useAppStore((state) => state.setBundlrData)
   const bundlrData = useAppStore((state) => state.bundlrData)
   const uploadedImage = useAppStore((state) => state.uploadedImage)
   const setUploadedImage = useAppStore((state) => state.setUploadedImage)
   const selectedChannel = useChannelStore((state) => state.selectedChannel)
-
-  const queuedVideos = usePersistStore((state) => state.queuedVideos)
-  const setQueuedVideos = usePersistStore((state) => state.setQueuedVideos)
   const { address } = useAccount()
   const { data: signer } = useSigner()
   const router = useRouter()
@@ -83,21 +70,13 @@ const UploadSteps = () => {
   const isSponsored = selectedChannel?.dispatcher?.sponsor
 
   const redirectToHomePage = () => {
-    router.push('/')
+    //router.push('/explore')
   }
 
   const setToQueue = (txn: { txnId?: string; txnHash?: string }) => {
     if (txn?.txnId) {
-      setQueuedVideos([
-        {
-          thumbnailUrl: uploadedImage.thumbnail,
-          title: uploadedImage.title,
-          txnId: txn.txnId,
-          txnHash: txn.txnHash
-        },
-        ...(queuedVideos || [])
-      ])
     }
+    console.error('setToQueue txn', txn)
     redirectToHomePage()
   }
 
@@ -112,7 +91,7 @@ const UploadSteps = () => {
   const onError = (error: CustomErrorWithData) => {
     toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
     setUploadedImage({
-      buttonText: t`Post Video`,
+      buttonText: t`Post Image`,
       loading: false
     })
   }
@@ -138,207 +117,60 @@ const UploadSteps = () => {
       user_id: selectedChannel?.id
     })
     return setUploadedImage({
-      buttonText: t`Post Video`,
+      buttonText: t`Post Image`,
       loading: false
     })
   }
 
-  const { signTypedDataAsync } = useSignTypedData({
-    onError
-  })
-  const [broadcast] = useBroadcastMutation({
-    onCompleted: ({ broadcast }) => {
-      onCompleted(broadcast.__typename)
-      if (broadcast.__typename === 'RelayerResult') {
-        const txnId = broadcast?.txId
-        setToQueue({ txnId })
-      }
+  const {write: setDispatcher} = useContractWrite({
+    address: LENS_HUB_ADDRESS,
+    abi: LENSHUB_PROXY_ABI,
+    functionName: 'setDispatcher',
+    mode: 'recklesslyUnprepared',
+    onSuccess: (data) => {
+      console.log('onSuccess data', data)
+    },
+    onError,
+    onMutate: (data) => {
+      console.log('onMutate data', data)
+    },
+    onSettled: (data) =>{
+      console.log('onSettled data', data)
     }
   })
 
   const { write: writePostContract } = useContractWrite({
     address: OPTREE_PROXY_ADDRESS,
     abi: OPTREE_PROXY_ABI,
-    functionName: 'postWithSig',
+    functionName: 'createNewCollection',
     mode: 'recklesslyUnprepared',
     onSuccess: (data) => {
+      console.log('onSuccess data', data)
       setUploadedImage({
-        buttonText: 'Post Video',
+        buttonText: 'Post Image',
         loading: false
       })
       if (data.hash) {
         setToQueue({ txnHash: data.hash })
       }
     },
-    onError
-  })
-
-  const getSignatureFromTypedData = async (
-    data: CreatePostBroadcastItemResult
-  ) => {
-    const { typedData } = data
-    toast.loading(REQUESTING_SIGNATURE_MESSAGE)
-    const signature = await signTypedDataAsync({
-      domain: omitKey(typedData?.domain, '__typename'),
-      types: omitKey(typedData?.types, '__typename'),
-      value: omitKey(typedData?.value, '__typename')
-    })
-    return signature
-  }
-
-  /**
-   * DATA AVAILABILITY STARTS
-   */
-  const [broadcastDataAvailabilityPost] = useBroadcastDataAvailabilityMutation({
-    onCompleted: (data) => {
-      onCompleted()
-      if (data.broadcastDataAvailability.__typename === 'RelayError') {
-        return toast.error(ERROR_MESSAGE)
-      }
-      if (
-        data?.broadcastDataAvailability.__typename ===
-        'CreateDataAvailabilityPublicationResult'
-      ) {
-        redirectToHomePage()
-      }
-    },
-    onError
-  })
-
-  const [createDataAvailabilityPostTypedData] =
-    useCreateDataAvailabilityPostTypedDataMutation({
-      onCompleted: async ({ createDataAvailabilityPostTypedData }) => {
-        const { id } = createDataAvailabilityPostTypedData
-        const signature = await getSignatureFromTypedData(
-          createDataAvailabilityPostTypedData
-        )
-        return await broadcastDataAvailabilityPost({
-          variables: { request: { id, signature } }
-        })
-      }
-    })
-
-  const [createDataAvailabilityPostViaDispatcher] =
-    useCreateDataAvailabilityPostViaDispatcherMutation({
-      onCompleted: ({ createDataAvailabilityPostViaDispatcher }) => {
-        if (
-          createDataAvailabilityPostViaDispatcher?.__typename === 'RelayError'
-        ) {
-          return
-        }
-        if (
-          createDataAvailabilityPostViaDispatcher.__typename ===
-          'CreateDataAvailabilityPublicationResult'
-        ) {
-          onCompleted()
-          redirectToHomePage()
-        }
-      },
-      onError
-    })
-  /**
-   * DATA AVAILABILITY ENDS
-   */
-
-  const [createPostViaDispatcher] = useCreatePostViaDispatcherMutation({
     onError,
-    onCompleted: ({ createPostViaDispatcher }) => {
-      onCompleted(createPostViaDispatcher.__typename)
-      if (createPostViaDispatcher.__typename === 'RelayerResult') {
-        setToQueue({ txnId: createPostViaDispatcher.txId })
-      }
-    }
-  })
-
-  const initBundlr = async () => {
-    if (signer?.provider && address && !bundlrData.instance) {
-      toast.loading(BUNDLR_CONNECT_MESSAGE)
-      const bundlr = await getBundlrInstance(signer)
-      if (bundlr) {
-        setBundlrData({ instance: bundlr })
-      }
-    }
-  }
-
-  const [createPostTypedData] = useCreatePostTypedDataMutation({
-    onCompleted: async ({ createPostTypedData }) => {
-      const { typedData, id } =
-        createPostTypedData as CreatePostBroadcastItemResult
-      const {
-        profileId,
-        contentURI,
-        collectModule,
-        collectModuleInitData,
-        referenceModule,
-        referenceModuleInitData
-      } = typedData?.value
-      try {
-        const signature = await getSignatureFromTypedData(createPostTypedData)
-        const { v, r, s } = utils.splitSignature(signature)
-        const args = {
-          profileId,
-          contentURI,
-          collectModule,
-          collectModuleInitData,
-          referenceModule,
-          referenceModuleInitData,
-          sig: { v, r, s, deadline: typedData.value.deadline }
-        }
-        const { data } = await broadcast({
-          variables: { request: { id, signature } }
-        })
-        if (data?.broadcast?.__typename === 'RelayError') {
-          return writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
-        }
-      } catch {}
+    onMutate: (data) => {
+      console.log('onMutate data', data)
     },
-    onError
+    onSettled: (data) =>{
+      console.log('onSettled data', data)
+    }
   })
 
-  const createTypedData = async (request: CreatePublicPostRequest) => {
-    await createPostTypedData({
-      variables: { request }
-    })
-  }
-
-  const createViaDispatcher = async (request: CreatePublicPostRequest) => {
-    const { data } = await createPostViaDispatcher({
-      variables: { request }
-    })
-    if (data?.createPostViaDispatcher.__typename === 'RelayError') {
-      await createTypedData(request)
-    }
-  }
-
-  const createViaDataAvailablityDispatcher = async (
-    request: CreateDataAvailabilityPostRequest
-  ) => {
-    const variables = { request }
-
-    const { data } = await createDataAvailabilityPostViaDispatcher({
-      variables
-    })
-
-    if (
-      data?.createDataAvailabilityPostViaDispatcher?.__typename === 'RelayError'
-    ) {
-      return await createDataAvailabilityPostTypedData({ variables })
-    }
-
-    if (
-      data?.createDataAvailabilityPostViaDispatcher.__typename ===
-      'CreateDataAvailabilityPublicationResult'
-    ) {
-      return redirectToHomePage()
-    }
-  }
-
+ 
   const createPublication = async ({
     imageSource
   }: {
     imageSource: string
   }) => {
     try {
+      //setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       setUploadedImage({
         buttonText: t`Storing metadata`,
         loading: true
@@ -376,53 +208,55 @@ const UploadSteps = () => {
         buttonText: t`Posting image`,
         loading: true
       })
-
-      const isRestricted = Boolean(degreesOfSeparation)
-      const referenceModuleDegrees = {
-        commentsRestricted: isRestricted,
-        mirrorsRestricted: isRestricted,
-        degreesOfSeparation: degreesOfSeparation
-      }
-
-      // Create Data Availability post
-      const { isRevertCollect } = uploadedImage.collectModule
-      const dataAvailablityRequest = {
-        from: selectedChannel?.id,
-        contentURI: metadataUri
-      }
-
-      const request = {
+      
+      console.log('getTimeAddedOneDayTime()', getTimeAddedOneDayTime())
+      let isFee = uploadedImage.collectModule.amount && parseFloat(uploadedImage.collectModule.amount) > 0
+      let derivedRuleModule = isFee ? FEE_DERIVIED_MODULE_ADDRESS: FREE_DERIVIED_MODULE_ADDRESS
+      let derivedRuleModuleInitData = isFee ? abiCoder.encode(['uint256','uint256','uint256','address' ,'address' ,'bool'],[
+        uploadedImage.collectModule.collectLimit, 
+        uploadedImage.collectModule.timeLimitEnabled ? getTimeAddedOneDayTime() : null , 
+        uploadedImage.collectModule.amount,
+        uploadedImage.collectModule.currency, 
+        uploadedImage.collectModule.recipient,
+        uploadedImage.referenceModule.followerOnlyReferenceModule]) : abiCoder.encode(['uint256','uint256','bool'],[
+          uploadedImage.collectModule.collectLimit, 
+          uploadedImage.collectModule.timeLimitEnabled ? getTimeAddedOneDayTime() : null ,
+          uploadedImage.referenceModule.followerOnlyReferenceModule])     
+      // collInfoURI: metadataUri,
+      //   royalty: uploadedImage.royalty,
+      //   collName: uploadedImage.title,
+      //   collSymbol: uploadedImage.title,
+      //   derivedRuleModule,
+      //   derivedRuleModuleInitData,              
+      const args = {
         profileId: selectedChannel?.id,
-        contentURI: metadataUri,
-        collectModule: getCollectModule(uploadedImage.collectModule),
-        referenceModule: {
-          followerOnlyReferenceModule:
-            uploadedImage.referenceModule?.followerOnlyReferenceModule,
-          degreesOfSeparationReferenceModule: uploadedImage.referenceModule
-            ?.degreesOfSeparationReferenceModule
-            ? referenceModuleDegrees
-            : null
-        }
+        // contentURI: metadataUri,
+        collInfoURI: metadataUri,
+        royalty: uploadedImage.royalty,
+        collName: uploadedImage.title,
+        collSymbol: uploadedImage.title,
+        derivedRuleModule,
+        derivedRuleModuleInitData,
+        collectModule: COLLECT_MODULE,
+        collectModuleInitData: abiCoder.encode(['bool'], [true]),
+        referenceModule: ZERO_ADDRESS,
+        referenceModuleInitData: []
       }
-
-      if (canUseRelay) {
-        if (isRevertCollect && isSponsored) {
-          return await createViaDataAvailablityDispatcher(
-            dataAvailablityRequest
-          )
-        }
-
-        return await createViaDispatcher(request)
-      }
-
-      return await createTypedData(request)
-    } catch {}
+      console.log('writePostContract args', args)
+      return  writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
+    } catch (e){
+      console.error('e',e) 
+      setUploadedImage({
+        buttonText: t`Post image`,
+        loading: false
+      })
+    }
   }
 
   const uploadImageToIpfs = async () => {
     if (uploadedImage.file){
       setUploadedImage({
-        buttonText: t`Posting image`,
+        buttonText: t`Uploading to IPFS`,
         loading: true
       })
       const reader = new FileReader();
@@ -430,18 +264,13 @@ const UploadSteps = () => {
         if (reader.result){
           const result = await storeCar(reader.result as string)
           const url = 'ipfs://' + result
-          console.log('result', result, url)
-          // if (!result) {
-          //   result.url = 'ipfs://bafkreienlg3zuid4nqdol7hbaqwppr2f266vr2eyjvcmx3yimfbt5bu3ru'
-          //   //return toast.error(t`IPFS Upload failed`)
-          // }
           setUploadedImage({
             percent: 100,
             imageSource: url
           })
-          // return await createPublication({
-          //   imageSource: url
-          // })
+          return await createPublication({
+            imageSource: url
+          })
         }
         
       });
@@ -451,67 +280,7 @@ const UploadSteps = () => {
    
   }
 
-  const uploadToBundlr = async () => {
-    if (!bundlrData.instance) {
-      return await initBundlr()
-    }
-    if (!uploadedImage.stream) {
-      return toast.error(t`Video not uploaded correctly`)
-    }
-    if (
-      parseFloat(bundlrData.balance) < parseFloat(bundlrData.estimatedPrice)
-    ) {
-      return toast.error(t`Insufficient storage balance`)
-    }
-    try {
-      setUploadedImage({
-        loading: true,
-        buttonText: t`Uploading to Arweave`
-      })
-      const bundlr = bundlrData.instance
-      const tags = [
-        { name: 'Content-Type', value: uploadedImage.imageType || 'image/png' },
-        { name: 'App-Name', value: OPTREE_APP_NAME },
-        { name: 'Profile-Id', value: selectedChannel?.id }
-      ]
-      const uploader = bundlr.uploader.chunkedUploader
-      const chunkSize = 10000000 // 10 MB
-      uploader.setChunkSize(chunkSize)
-      uploader.on('chunkUpload', (chunkInfo) => {
-        const fileSize = uploadedImage?.file?.size as number
-        const lastChunk = fileSize - chunkInfo.totalUploaded
-        if (lastChunk <= chunkSize) {
-          toast.loading(REQUESTING_SIGNATURE_MESSAGE, { duration: 8000 })
-        }
-        const percentCompleted = Math.round(
-          (chunkInfo.totalUploaded * 100) / fileSize
-        )
-        setUploadedImage({
-          loading: true,
-          percent: percentCompleted
-        })
-      })
-      const upload = uploader.uploadData(uploadedImage.stream as any, {
-        tags
-      })
-      const response = await upload
-      setUploadedImage({
-        loading: false,
-        imageSource: `ar://${response.data.id}`
-      })
-      return await createPublication({
-        imageSource: `ar://${response.data.id}`
-      })
-    } catch (error) {
-      toast.error(t`Failed to upload video to Arweave`)
-      logger.error('[Error Bundlr Upload Video]', error)
-      return setUploadedImage({
-        loading: false,
-        buttonText: t`Post Video`
-      })
-    }
-  }
-
+  
   const onUpload = async (data: NFTFormData) => {
     uploadedImage.title = data.title
     uploadedImage.description = data.description

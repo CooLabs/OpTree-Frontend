@@ -10,10 +10,10 @@ import type { ReferenceModuleType } from 'utils'
 const ReferenceModule = () => {
   const [showModal, setShowModal] = useState(false)
   const uploadedImage = useAppStore((state) => state.uploadedImage)
-  const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
+  const setUploadedImage = useAppStore((state) => state.setUploadedImage)
 
   const setReferenceType = (data: ReferenceModuleType) => {
-    setUploadedVideo({
+    setUploadedImage({
       referenceModule: { ...uploadedImage.collectModule, ...data }
     })
   }

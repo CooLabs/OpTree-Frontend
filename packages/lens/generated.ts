@@ -75,6 +75,12 @@ export type Scalars = {
   UnixTimestamp: { input: any; output: any }
   Url: { input: any; output: any }
   Void: { input: any; output: any }
+  royalty: { input: any; output: any }
+  collName: { input: any; output: any }
+  collSymbol: { input: any; output: any }
+  collInfoURI: { input: any; output: any }
+  derivedRuleModule: { input: any; output: any }
+  derivedRuleModuleInitData: { input: any; output: any }
 }
 
 export type AaveFeeCollectModuleParams = {
@@ -750,12 +756,18 @@ export type CreatePostEip712TypedDataValue = {
   __typename?: 'CreatePostEIP712TypedDataValue'
   collectModule: Scalars['ContractAddress']['output']
   collectModuleInitData: Scalars['CollectModuleData']['output']
-  contentURI: Scalars['PublicationUrl']['output']
+  contentURI?: Scalars['PublicationUrl']['output']
   deadline: Scalars['UnixTimestamp']['output']
   nonce: Scalars['Nonce']['output']
   profileId: Scalars['ProfileId']['output']
   referenceModule: Scalars['ContractAddress']['output']
   referenceModuleInitData: Scalars['ReferenceModuleData']['output']
+  royalty?: Scalars['royalty']['output'],
+  collName?: Scalars['collName']['output'],
+  collSymbol?: Scalars['collSymbol']['output'],
+  collInfoURI?: Scalars['collInfoURI']['output'],
+  derivedRuleModule?: Scalars['ContractAddress']['output'],
+  derivedRuleModuleInitData?: Scalars['derivedRuleModuleInitData']['output'],
 }
 
 export type CreateProfileRequest = {
@@ -787,13 +799,19 @@ export type CreatePublicPostRequest = {
   /** The collect module */
   collectModule: CollectModuleParams
   /** The metadata uploaded somewhere passing in the url to reach it */
-  contentURI: Scalars['Url']['input']
+  contentURI? : Scalars['Url']['input']
   /** The criteria to access the publication data */
   gated?: InputMaybe<GatedPublicationParamsInput>
   /** Profile id */
   profileId: Scalars['ProfileId']['input']
   /** The reference module */
   referenceModule?: InputMaybe<ReferenceModuleParams>
+  royalty?: number                //创建collection的版税
+  collInfoURI?: Scalars['Url']['input']             //collection描述，json文件的IPFS URL，可以包含collection名称，collection描述等
+  collName?: string                //collection name
+  collSymbol?: string             //collection symbol
+  derivedRuleModule?: CollectModuleParams          //设置fork的规则，这个有几个选项地址，合约由我们部署，根据用户对应选项，选对应的合约地址
+
 }
 
 export type CreatePublicSetProfileMetadataUriRequest = {
@@ -1504,28 +1522,37 @@ export type ExplorePublicationResult = {
 
 export type FeeCollectModuleParams = {
   /** The collect module amount info */
-  amount: ModuleFeeAmountParams
+  currency: Scalars['ContractAddress']['input']
+  /** Floating point number as string (e.g. 42.009837). It could have the entire precision of the Asset or be truncated to the last significant decimal. */
+  amount: Scalars['String']['input']
   /** Follower only */
   followerOnly: Scalars['Boolean']['input']
   /** The collect module recipient address */
   recipient: Scalars['EthereumAddress']['input']
-  /** The collect module referral fee */
-  referralFee: Scalars['Float']['input']
+  // /** The collect module referral fee */
+  // referralFee: Scalars['Float']['input']
+  mintLimit: Scalars['String']['input'],
+  endTime: Scalars['DateTime']['output'],
 }
 
 export type FeeCollectModuleSettings = {
   __typename?: 'FeeCollectModuleSettings'
   /** The collect module amount info */
-  amount: ModuleFeeAmount
   contractAddress: Scalars['ContractAddress']['output']
   /** Follower only */
   followerOnly: Scalars['Boolean']['output']
   /** The collect module recipient address */
   recipient: Scalars['EthereumAddress']['output']
   /** The collect module referral fee */
-  referralFee: Scalars['Float']['output']
-  /** The collect modules enum */
   type: CollectModules
+  /** The collect module amount info */
+  currency: Scalars['ContractAddress']['input']
+  /** Floating point number as string (e.g. 42.009837). It could have the entire precision of the Asset or be truncated to the last significant decimal. */
+  amount: Scalars['String']['input']
+  // /** The collect module referral fee */
+  // referralFee: Scalars['Float']['input']
+  mintLimit: Scalars['String']['input'],
+  endTime: Scalars['DateTime']['output'],
 }
 
 export type FeeFollowModuleParams = {
@@ -1716,6 +1743,8 @@ export type FraudReasonInputParams = {
 export type FreeCollectModuleParams = {
   /** Follower only */
   followerOnly: Scalars['Boolean']['input']
+  mintLimit: Scalars['String']['input'],
+  endTime: Scalars['DateTime']['input'],
 }
 
 export type FreeCollectModuleSettings = {
@@ -1725,6 +1754,8 @@ export type FreeCollectModuleSettings = {
   followerOnly: Scalars['Boolean']['output']
   /** The collect modules enum */
   type: CollectModules
+  mintLimit: Scalars['String']['output'],
+  endTime: Scalars['DateTime']['output'],
 }
 
 export type FreeCollectProxyAction = {
@@ -6773,7 +6804,11 @@ export type CreatePostTypedDataMutation = {
         nonce: any
         deadline: any
         profileId: any
-        contentURI: any
+        collInfoURI: any           
+        collName: any               
+        collSymbol: any              
+        derivedRuleModule: any        
+        derivedRuleModuleInitData: any
         collectModule: any
         collectModuleInitData: any
         referenceModule: any
@@ -15300,7 +15335,12 @@ export const CreatePostTypedDataDocument = gql`
           nonce
           deadline
           profileId
-          contentURI
+          royalty               
+          collInfoURI            
+          collName               
+          collSymbol              
+          derivedRuleModule        
+          derivedRuleModuleInitData
           collectModule
           collectModuleInitData
           referenceModule
