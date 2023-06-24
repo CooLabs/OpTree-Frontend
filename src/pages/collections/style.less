@@ -1,0 +1,90 @@
+.collection-wrapper {
+  width: 100%;
+  margin: 0 auto;
+  .collection-top-header {
+    padding: 0px 20px;
+  }
+
+  &-main {
+    width: 100%;
+    display: flex;
+    padding-left: 60px;
+    .right-wrappper {
+      width: 400px;
+      margin-top: -80px;
+      margin-left: 20px;
+      top: calc(@content-paddingTop + 40px);
+      height: calc(100vh - @content-paddingTop - 40px);
+      overflow-y: scroll;
+      overflow-x: hidden;
+      position: sticky;
+    }
+    .left-wrapper1 {
+      width: calc(100% - 400px);
+    }
+    .left-wrapper {
+      width: 100%;
+      padding-right: 60px;
+    }
+    .collection-wrapper-top-wrapper {
+      .text-info {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        column-gap: 150px;
+        .collection-info {
+          width: calc(100% - 150px - 696px);
+        }
+        .right-info {
+          display: flex;
+          flex-direction: column;
+          row-gap: 20px;
+          align-items: flex-end;
+          .opreation-content {
+            margin-top: -50px;
+          }
+          .link-list {
+            display: flex;
+            background-color: var(--icons-bg-color);
+            border: 1px solid var(--icons-bd-color);
+            border-radius: 8px;
+            height: 40px;
+            align-items: center;
+            a {
+              display: flex;
+              padding: 0px 14px;
+              &:not(a:last-child) {
+                border-right: 1px solid var(--icons-bd-color);
+              }
+              svg {
+                fill: var(--icon-active-color);
+              }
+            }
+          }
+          .listing-info {
+            height: 90px;
+            max-width: 98%;
+            padding-left: 40px;
+            width: fit-content;
+            display: flex;
+            border-radius: 10px;
+            align-items: center;
+            border: 1px solid var(--icons-bd-color);
+            background-color: var(--icons-bg-color);
+            .item {
+              width: 164px;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              justify-content: center;
+            }
+          }
+        }
+      }
+    }
+    .padding0 {
+      padding: 0px;
+    }
+  }
+}

@@ -1,0 +1,186 @@
+.section-1 {
+    outline-offset: 0px;
+    background-color: #6bec69;
+    outline: 3px #333;
+    display: flex;
+    height: 700px;
+    justify-content: center;
+
+    .container-1 {
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 0;
+        display: flex;
+        column-gap: 50px;
+    
+        .column-1 {
+            height: 650px;
+            width: 700px;
+            max-width: 100%;
+            grid-column-gap: 16px;
+            grid-row-gap: 16px;
+            border-radius: 0;
+            flex-direction: column;
+            grid-template-rows: auto auto;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-columns: 1fr;
+            justify-content: flex-end;
+            display: flex;
+        
+            .heading {
+                width: 700px;
+                justify-content: flex-start;
+                align-items: flex-start;
+                margin-top: 40px;
+                margin-bottom: 40px;
+                padding-bottom: 0;
+                font-size: 100px;
+                font-weight: 700;
+                line-height: 60px;
+                display: flex;
+              }
+          }
+        .column-2{
+            height: 650px;
+            width: 500px;
+            img {
+                width: 230px;
+            }
+        }
+    }
+  }
+.section-2 {
+    height: 650px;
+    opacity: 1;
+    outline-offset: 0px;
+    background-color: #181818;
+    .container-2{
+        justify-content: center;
+        align-items: center;
+        margin-top: 0;
+        display: flex;
+        column-gap: 50px;
+
+        .column-1 {
+            width: 700px;
+        }
+
+        .column-2{
+            height: 650px;
+            width: 500px;
+            img {
+                width: 460px;
+            }
+        }
+        .subtitle {
+            color: #f6fafc;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: stretch;
+            margin-bottom: 100px;
+            padding-top: 0;
+            padding-bottom: 0;
+            font-size: 35px;
+            display: flex;
+        }
+    }
+}
+
+.section-3{
+    width: 1250px;
+    margin: 0 auto;
+    img{
+        width: 260px;
+        height: 350px;
+        object-fit: cover;
+    }
+}
+
+.section-4{
+    width: 1250px;
+    margin: 0 auto;
+    img{
+        height: 150px;
+    }
+    
+    .align-start{
+        justify-content: center;
+        align-items: start;
+        display: flex;
+        column-gap: 5px;
+    }
+}
+
+.section-5{
+    width: 1250px;
+    margin: 0 auto;
+    display: flex;
+    column-gap: 50px;
+    
+    .column-1{
+        width: 480px;
+        height: calc(100vh - @content-paddingTop);
+        overflow-y: scroll;
+        overflow-x: hidden;
+        position: sticky;
+        top: @content-paddingTop;
+        bottom: 0;
+    }
+    .column-2{
+        width: 720px;
+        .position-relative{
+            position: relative;
+        }
+        .left-bottom{
+            position: absolute;
+            left: 20px;
+            bottom: 0px;
+            color: var(--font-color-btn);
+        }
+    }
+    img{
+        width: 720px;
+    }
+  
+}
+
+.section-6 {
+    width: 1250px;
+    margin: 0 auto;
+    .row-1 {
+        display: flex;
+        align-items: start;
+        .ant-input {
+            height: 50px;
+            border-radius: 8px 0px 0px 8px;
+            border: 1px solid var(--icons-bd-color);
+            box-shadow: none;
+            padding: 0 11px;
+            background: transparent;
+            color: var(--font-color);
+            .ant-input {
+            background: transparent;
+            border: none;
+            }
+            .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+            .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+            background: transparent;
+            }
+        }
+        .ant-input:hover,
+        .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
+            border-color: #666666;
+        }
+       
+        .ant-input-group-addon{
+            background-color: black;
+            border-radius: 0px 8px 8px 0px;
+        }
+    }
+    .divider {
+        width: 100%;
+        height: 1px;
+        background-color: #e4ebf3;
+    }
+    
+}

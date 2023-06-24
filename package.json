@@ -1,34 +1,240 @@
 {
-  "name": "OpTree",
-  "description": "",
-  "version": "1.0.0-beta",
+  "name": "ccc-aptos",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "dependencies": {
+    "@apollo/client": "^3.7.15",
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.18.6",
+    "@bundlr-network/client": "0.11.2",
+    "@fewcha/web3": "^0.1.32",
+    "@fingerprintjs/fingerprintjs": "^3.4.1",
+    "@hookform/resolvers": "^3.1.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+    "@rainbow-me/rainbowkit": "^0.12.12",
+    "@react-three/drei": "^8.20.2",
+    "@react-three/fiber": "^7.0.26",
+    "@svgr/webpack": "^5.5.0",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@tippyjs/react": "^4.2.6",
+    "@types/pubsub-js": "^1.8.3",
+    "@types/react-color": "^3.0.6",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-router-dom": "^5.3.3",
+    "antd": "^4.22.4",
+    "aptos": "^1.3.15",
+    "assert": "^2.0.0",
+    "axios": "0.25.0",
+    "babel-jest": "^27.4.2",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-named-asset-import": "^0.3.8",
+    "babel-preset-react-app": "^10.0.1",
+    "bfj": "^7.0.2",
+    "bignumber.js": "^9.0.1",
+    "browserify-zlib": "^0.2.0",
+    "browserslist": "^4.18.1",
+    "buffer": "^6.0.3",
+    "camelcase": "^6.2.1",
+    "case-sensitive-paths-webpack-plugin": "^2.4.0",
+    "clsx": "^1.2.1",
+    "compression-webpack-plugin": "^10.0.0",
+    "crypto-browserify": "^3.12.0",
+    "css-loader": "^6.5.1",
+    "css-minimizer-webpack-plugin": "^3.2.0",
+    "dayjs": "^1.11.8",
+    "dotenv": "^10.0.0",
+    "dotenv-expand": "^5.1.0",
+    "emoji-mart": "^5.5.2",
+    "env-cmd": "^10.1.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-webpack-plugin": "^3.1.1",
+    "ethers": "5.6.0",
+    "events": "^3.3.0",
+    "fast-average-color": "^9.3.0",
+    "file-loader": "^6.2.0",
+    "filereader-stream": "^2.0.0",
+    "fs-extra": "^10.0.0",
+    "graphql": "^16.6.0",
+    "html-webpack-plugin": "^5.5.0",
+    "http-proxy-middleware": "^2.0.6",
+    "https-browserify": "^1.0.0",
+    "identity-obj-proxy": "^3.0.0",
+    "interweave": "^13.1.0",
+    "jest": "^27.4.3",
+    "jest-resolve": "^27.4.2",
+    "jest-watch-typeahead": "^1.0.0",
+    "jimp": "^0.16.1",
+    "keccak256": "^1.0.6",
+    "less": "^4.1.3",
+    "less-loader": "^7.3.0",
+    "lint-staged": "^13.0.3",
+    "make-plural": "^7.3.0",
+    "merkletreejs": "^0.2.27",
+    "mime": "^3.0.0",
+    "mini-css-extract-plugin": "^2.4.5",
+    "mixpanel-browser": "^2.47.0",
+    "mobx": "^6.6.1",
+    "mobx-react": "^7.5.2",
+    "nft.storage": "^7.1.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "path-browserify": "^1.0.1",
+    "postcss": "^8.4.4",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-loader": "^6.2.1",
+    "postcss-normalize": "^10.0.1",
+    "postcss-preset-env": "^7.0.1",
+    "postcss-pxtorem": "^6.0.0",
+    "prettier": "^2.7.1",
+    "process": "^0.11.10",
+    "prompts": "^2.4.2",
+    "pubsub-js": "1.9.4",
+    "react": "18.2.0",
+    "react-app-polyfill": "^3.0.0",
+    "react-color": "^2.19.3",
+    "react-cool-inview": "^3.0.1",
+    "react-dev-utils": "^12.0.1",
+    "react-dom": "18.2.0",
+    "react-error-overlay": "^6.0.11",
+    "react-hook-form": "^7.44.3",
+    "react-mentions": "^4.4.9",
+    "react-refresh": "^0.14.0",
+    "react-router-dom": "5",
+    "resolve": "^1.22.1",
+    "resolve-url-loader": "^4.0.0",
+    "semver": "^7.3.5",
+    "slick-carousel": "^1.8.1",
+    "source-map-loader": "^3.0.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "style-loader": "^3.3.1",
+    "style-resources-loader": "^1.5.0",
+    "swr": "^2.1.5",
+    "terser-webpack-plugin": "^5.2.5",
+    "three": "^0.137.5",
+    "three-stdlib": "^2.12.1",
+    "typescript": "^4.7.4",
+    "url": "^0.11.0",
+    "util": "^0.12.4",
+    "uuid": "^9.0.0",
+    "video.js": "^7.17.0",
+    "wagmi": "^0.12.13",
+    "web-vitals": "^2.1.4",
+    "webpack": "^5.64.4",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-manifest-plugin": "^4.0.2",
+    "workbox-webpack-plugin": "^6.4.1",
+    "xlsx": "^0.18.5",
+    "zod": "^3.21.4",
+    "zustand": "^4.3.8"
+  },
   "scripts": {
-    "build": "turbo run build --parallel",
-    "dev": "turbo run dev --parallel",
-    "start": "turbo run start --parallel",
-    "codegen": "turbo run codegen",
-    "lint": "turbo run lint --parallel",
-    "typecheck": "turbo run typecheck --parallel",
-    "prepare": "husky install",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "dev:test": "turbo run dev:test",
-    "e2e:test": "start-server-and-test start 8888 dev:test",
-    "i18n:extract": "turbo run extract"
+    "start": "env-cmd -f .env.testnet node scripts/start.js",
+    "start:dev": "env-cmd -f .env.development node scripts/start.js",
+    "start:production": "PORT=3001 env-cmd -f .env.production node scripts/start.js",
+    "start:testnet": "PORT=3001 env-cmd -f .env.testnet node scripts/start.js",
+    "build": "env-cmd -f .env.production node scripts/build.js",
+    "build:testnet": "env-cmd -f .env.testnet node scripts/build.js",
+    "test": "craco test",
+    "lint-staged": "lint-staged",
+    "lint-staged:js": "eslint --fix"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+      "^.+\\.module\\.(css|less)$"
+    ],
+    "modulePaths": [],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|less)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "resetMocks": true
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "lint-staged": {
+    "src/**/*.+(js|jsx|ts|tsx)": [
+      "eslint --fix"
+    ],
+    "src/**/*.+(less|css|less|scss)": [
+      "prettier -c -w"
+    ]
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
-    "danger": "11.2.6",
-    "husky": "^8.0.3",
-    "start-server-and-test": "^2.0.0",
-    "ts-node": "latest",
-    "turbo": "1.10.2"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "packageManager": "yarn@1.22.19"
+    "@types/node": "^18.6.5",
+    "@types/react": "^18.0.17",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier-eslint": "^15.0.1",
+    "react-router": "5",
+    "react-slick": "^0.29.0",
+    "router": "^1.3.7"
+  }
 }

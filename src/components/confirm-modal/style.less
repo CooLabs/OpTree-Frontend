@@ -1,0 +1,35 @@
+.modal-content-wrapper {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  .ant-modal-content {
+    background-color: var(--main-bg-color);
+    border-radius: 8px;
+    padding-bottom: 0px;
+    .ant-modal-header {
+      padding: 16px 24px 0 24px;
+      border-bottom: none;
+      border-radius: 8px;
+      background: none;
+      .ant-modal-title {
+        width: 100%;
+        font-size: @font-size-20;
+        text-align: center;
+        color: var(--font-color);
+        font-family: Poppins-SemiBold, Poppins;
+        font-weight: 600;
+      }
+    }
+    .ant-modal-body {
+      padding: 20px 20px 40px 20px;
+    }
+    .modal-button-layout {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      column-gap: 40px;
+      .all-btn {
+        width: 100%;
+      }
+    }
+  }
+}

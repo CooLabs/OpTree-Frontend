@@ -1,0 +1,54 @@
+.page-header {
+  width: 100%;
+  .ant-image {
+    width: 100%;
+  }
+  &-loading {
+    height: 375px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &-banner {
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .ant-image {
+    width: 100%;
+    height: 100%;
+    &-img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+    }
+    &-placeholder {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--main-bg-color);
+    }
+  }
+  &-avatar {
+    width: 150px !important;
+    height: 150px !important;
+    margin-left: 40px;
+    margin-top: -75px;
+    border-radius: 50%;
+    border: 15px solid var(--main-bg-color);
+  }
+
+  &-avatar-bg {
+    background: var(--main-bg-color);
+    overflow: hidden;
+    .ant-skeleton-image {
+      width: 60px;
+      height: 60px;
+    }
+  }
+}
