@@ -1,4 +1,4 @@
-import { OPTREE_PROXY_ABI } from '@/abis/LensHubProxy'
+import { LENSHUB_PROXY_ABI, OPTREE_PROXY_ABI } from '@/abis/LensHubProxy'
 import useChannelStore from '@/lib/store/channel'
 import { ethers } from 'ethers'
 import './style.less'
@@ -9,7 +9,7 @@ import {
 import {PublicationMainFocus} from '@/lens'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {CustomErrorWithData} from '@/utils/custom-types'
-import { COLLECT_MODULE, OPTREE_APP_ID, ZERO_ADDRESS } from '@/utils/constants'
+import { COLLECT_MODULE, LENS_HUB_ADDRESS, OPTREE_APP_ID, ZERO_ADDRESS } from '@/utils/constants'
 import {
   ERROR_MESSAGE,
   OPTREE_PROXY_ADDRESS,
@@ -92,6 +92,19 @@ const ForkPaintNFT = (props) => {
   })
 
  
+  const { write: setDispatcher } = useContractWrite({
+    address: LENS_HUB_ADDRESS,
+    abi: LENSHUB_PROXY_ABI,
+    functionName: 'setDispatcher',
+    mode: 'recklesslyUnprepared',
+    onSuccess: (data) => {
+      console.log('onSuccess data', data) 
+    },
+    onError: (error: CustomErrorWithData)=>{
+      openNotificationWithIcon('error', 'Error', error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
+    }
+  })
+
   const createPublication = async ({
     imageSource, uploadedImage
   }: {
@@ -151,6 +164,7 @@ const ForkPaintNFT = (props) => {
         referenceModuleInitData: [],
       }
       console.log('writePostContract args', args)
+      setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       return  writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
     } catch (e){
       console.error('e',e) 

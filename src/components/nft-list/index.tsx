@@ -97,12 +97,7 @@ function NFTList(props: Props) {
           <GridList className="list" itemWidth={260}>
             {nftList?.map((item, index) => {
               return (
-                <Link
-                  to={`/paint/${item.collectionId}/${item.tokenId}/${item.detailJson.image.replace('ipfs://','')}/${item.id}`}
-                  key={index}
-                >
-                  <NftCard data={item} />
-                </Link>
+                  <NftCard key={index} data={item} />
               );
             })}
           </GridList>

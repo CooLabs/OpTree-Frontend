@@ -1,4 +1,4 @@
-import { OPTREE_PROXY_ABI } from '@/abis/LensHubProxy'
+import { LENSHUB_PROXY_ABI, OPTREE_PROXY_ABI } from '@/abis/LensHubProxy'
 import useAppStore, { UPLOADED_IMAGE_FORM_DEFAULTS } from '@/lib/store'
 import useChannelStore from '@/lib/store/channel'
 import { ethers } from 'ethers'
@@ -11,7 +11,7 @@ import {
   ReferenceModules} from '@/lens'
 import { useEffect } from 'react'
 import {CustomErrorWithData} from '@/utils/custom-types'
-import { COLLECT_MODULE, FEE_DERIVIED_MODULE_ADDRESS, FREE_DERIVIED_MODULE_ADDRESS, OPTREE_APP_ID, ZERO_ADDRESS } from '@/utils/constants'
+import { COLLECT_MODULE, FEE_DERIVIED_MODULE_ADDRESS, FREE_DERIVIED_MODULE_ADDRESS, LENS_HUB_ADDRESS, OPTREE_APP_ID, ZERO_ADDRESS } from '@/utils/constants'
 import {
   ERROR_MESSAGE,
   OPTREE_PROXY_ADDRESS,
@@ -105,6 +105,18 @@ const UploadSteps = () => {
     }
   })
 
+  const { write: setDispatcher } = useContractWrite({
+    address: LENS_HUB_ADDRESS,
+    abi: LENSHUB_PROXY_ABI,
+    functionName: 'setDispatcher',
+    mode: 'recklesslyUnprepared',
+    onSuccess: (data) => {
+      console.log('onSuccess data', data) 
+    },
+    onError: (error: CustomErrorWithData)=>{
+      openNotificationWithIcon('error', 'Error', error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
+    }
+  })
  
   const createPublication = async ({
     imageSource
@@ -184,6 +196,7 @@ const UploadSteps = () => {
         referenceModuleInitData: []
       }
       console.log('writePostContract args', args)
+      setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       return  writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
     } catch (e){
       console.error('e',e) 
