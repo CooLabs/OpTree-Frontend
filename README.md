@@ -44,13 +44,3 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-拷贝 build to server
-scp -r ~/xxx/Aptos-front/build root@47.88.25.203:~/ItsRare/aptos-front
-
-若端口 3000 被占用
-查看端口 3000 的占用情况
-netstat -anp | grep node
-若占用关闭对应的进程号 kill 9 pid
-
-启动服务 nohup serve -p 3000 -s build>>out.log & echo "start serve"
