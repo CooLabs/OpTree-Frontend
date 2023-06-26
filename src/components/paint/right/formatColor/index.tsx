@@ -9,7 +9,7 @@ interface FormatColor {
 
 const FormatColor: React.FC<FormatColor> = (props) => {
   const { className } = props;
-  const FillColorContext:any = useContext(FillContext);
+  const FillColorContext = useContext(FillContext);
 
   return (
     <div className={className ? `formatColor ${className}` : `formatColor`}>

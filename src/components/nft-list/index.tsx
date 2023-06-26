@@ -10,7 +10,13 @@ import { getPageIndicator } from '@/components/page-indictor';
 import NftCard from '../nft-card';
 import sanitizeDStorageUrl from '@/utils/functions/sanitizeDStorageUrl';
 import { DoubleRightOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import Lenster from '@/assets/images/lenster-logo.svg'
+import Opensea from '@/assets/images/opensea-logo.svg'
 import AddNft from './add-nft';
+import useChannelStore from '@/lib/store/channel';
+import { Profile } from '@/lens';
+import { OPTREE_PROXY_ADDRESS, POLYGON_CHAIN_ID } from '@/utils/constants';
+import { useBalance } from 'wagmi';
 
 interface Props {
   id: string
@@ -32,6 +38,15 @@ function NFTList(props: Props) {
   const [collapseBlurb, setCollapseBlurb] = useState(false);
   const [isBlurbOpen, setIsBlurbOpen] = useState(false);
   const [blurbElement, setBlurbElement] = useState<any>();
+  const selectedChannel = useChannelStore(
+    (state) => state.selectedChannel as Profile
+  )
+
+  const { data: userBalance } = useBalance({
+    address: OPTREE_PROXY_ADDRESS,
+    chainId: POLYGON_CHAIN_ID,
+    watch: true
+  })
 
   useEffect(() => {
     if (blurbElement?.clientHeight > 110) {
@@ -57,15 +72,19 @@ function NFTList(props: Props) {
   };
 
   return (
-    <div className="collection-list-wrapper">
-      <div className='collection-list-wrapper-header '>
+    <div className="nft-list-wrapper">
+      <div className='nft-list-wrapper-header '>
         {collectionInfo && <Image className='featured'
           src={sanitizeDStorageUrl(collectionInfo?.detailJson?.image)}
           preview={false}/>}
-        {collectionInfo && <div>
-            <h3>{collectionInfo.detailJson.name}</h3>
-            <h4>{collectionInfo.detailJson.description}</h4>
-            <div className='margin-top-10'
+        {collectionInfo && <div className='flex1'>
+            <div className='width100 space-between'>
+              <h3>{collectionInfo.detailJson.name}</h3>
+              <h4>{`Balance: ${userBalance?.formatted} ${userBalance?.symbol}`}</h4>
+            </div>
+            
+            <h4 className='margin-top-10'>{collectionInfo.detailJson.description}</h4>
+            {/* <div className='margin-top-10'
               ref={(e) => {
                 setBlurbElement(e);
               }}
@@ -82,8 +101,16 @@ function NFTList(props: Props) {
               }}
               dangerouslySetInnerHTML={{ __html: collectionInfo.detailJson.content }}
             ></div>
-            {collapseBlurb ? <DoubleRightOutlined rotate={isBlurbOpen ? 270 : 90} onClick={() => setIsBlurbOpen(!isBlurbOpen)} /> : ''}
-
+            {collapseBlurb ? <DoubleRightOutlined rotate={isBlurbOpen ? 270 : 90} onClick={() => setIsBlurbOpen(!isBlurbOpen)} /> : ''} */}
+            <div className='flex-20 margin-top-10'>
+              <a href={`https://testnet.lenster.xyz/${selectedChannel?'u/'+selectedChannel.handle:''}`} target='_blank'>
+                <img className='lenster' src={Lenster}></img>
+              </a>
+              <a href={`https://testnets.opensea.io/collection/${collectionInfo.detailJson.name.toLocaleLowerCase()}`} target='_blank'>
+                <img className='lenster' src={Opensea}></img>
+              </a>
+            </div>
+            
           </div>}
       </div>
       <div className="margin-top-40">

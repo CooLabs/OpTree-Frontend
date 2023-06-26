@@ -12,7 +12,7 @@ const Home1 = () => {
             <div className="column-1">
                 <h1 className="heading">Show</h1>
                 <h1 className="heading">Creativity in</h1>
-                <h1 className="heading">Collabaration</h1>
+                <h1 className="heading ">Collabaration</h1>
             </div>
             <div className="column-2">
                 <div className="flex content-center">

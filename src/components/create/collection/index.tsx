@@ -133,7 +133,7 @@ const UploadSteps = () => {
       const media: Array<PublicationMetadataMediaInput> = [
         {
           item: uploadedImage.imageSource,
-          type: uploadedImage.imageType,
+          type: uploadedImage.imageType || 'image/png',
           cover: uploadedImage.imageSource
         }
       ]
@@ -143,11 +143,11 @@ const UploadSteps = () => {
         metadata_id: uuidv4(),
         description: trimify(uploadedImage.description),
         content: trimify(
-          `I'm create a fantasitic collection on OpTree(A decentralized co-create platform).\nShow your creativity in collaboration.\nLet's jump in...\n${OPTREE_WEBSITE_URL}/${trimify(uploadedImage.title)}`
+          `I'm create a fantasitic collection on OpTree(A decentralized co-create platform).\nShow your creativity in collaboration.\nLet's jump in...\n${OPTREE_WEBSITE_URL}/#/explore`
         ),
         locale: getUserLocale(),
         mainContentFocus: PublicationMainFocus.Image,
-        external_url: `${OPTREE_WEBSITE_URL}/${trimify(uploadedImage.title)}`,
+        external_link: `${OPTREE_WEBSITE_URL}`,
         image: uploadedImage.imageSource,
         name: trimify(uploadedImage.title),
         attributes,
@@ -185,7 +185,7 @@ const UploadSteps = () => {
         profileId: selectedChannel?.id,
         // contentURI: metadataUri,
         collInfoURI: metadataUri,
-        royalty: uploadedImage.royalty,
+        royalty: uploadedImage.royalty * 100,
         collName: uploadedImage.title,
         collSymbol: uploadedImage.title,
         derivedRuleModule,

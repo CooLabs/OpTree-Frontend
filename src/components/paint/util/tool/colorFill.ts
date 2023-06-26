@@ -1,4 +1,5 @@
 import Tool, { getMousePos, getTouchPos,setStraw, Point } from "./tool";
+import Color from "color";
 import { parseColorString } from "../colorChange";
 import { refresh, updatePixelBoxs } from "./pixelUtil";
 

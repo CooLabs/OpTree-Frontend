@@ -38,7 +38,8 @@ export function getImageSize(url: string): Promise<{
         height: image.height,
       });
     };
-    image.onerror = function () {
+    image.onerror = function (error) {
+      console.log('error',error,url)
       reject(new Error("error"));
     };
   });

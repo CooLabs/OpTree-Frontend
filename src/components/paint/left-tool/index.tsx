@@ -14,11 +14,11 @@ const selectedToolClass = "selected-tool";
 export interface ToolPanelProps {
   className?: string;
   fillColor?: string;
-  isPixel: boolean;
+  isPixel?: boolean;
 }
 
 const ToolPanel: React.FC<ToolPanelProps> = (props) => {
-  const { className, fillColor, isPixel } = props;
+  const { className, fillColor, isPixel=false } = props;
   return (
     <div className={className ? `toolpanel ${className}` : "toolpanel"}>
       <ToolTypeContext.Consumer>

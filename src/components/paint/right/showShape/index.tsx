@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from "react";
 import ShapeComponent from "../components/shape";
 import ColorPanel from "../components/colorPanel";
-import { DownOutlined } from "@ant-design/icons";
 import IntegerStep from "../components/slider";
 import { Shape } from "../../util/tool";
 import arrow from "@/assets/icon/arrow.svg";
@@ -12,13 +11,12 @@ interface shapeType {
   maxSize: number;
 }
 
-const showShape: FC<shapeType> = (props) => {
+const showShape = (props: shapeType) => {
   const { lineSize, maxSize } = props;
 
-  // useEffect(() => {
-  //   //Shape.shapeWidth = lineSize / 2;
-  // }, []);
-
+  useEffect(() => {
+    Shape.shapeWidth = lineSize / 2;
+  }, []);
   return (
     <div className="ccc-shape">
       <div className="ccc-shape-item">

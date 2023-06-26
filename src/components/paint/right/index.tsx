@@ -17,7 +17,7 @@ interface ToolbarProps {
 const ToolRightBar: FC<ToolbarProps> = (props) => {
   const { toolType, lineSize, maxSize = 100, ThumbSrc } = props;
   const renderChild = (): any => {
-    let content: any= null;
+    let content:any = null;
     switch (toolType) {
       case ToolType.PEN:
         content = <ShowPen lineSize={lineSize} maxSize={maxSize} />;

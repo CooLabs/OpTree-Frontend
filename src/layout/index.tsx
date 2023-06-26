@@ -79,13 +79,13 @@ const LayoutRouter = (props: any) => {
   };
 
   return (
-    <Layout className="aptosContent">
+    <Layout className="optree-content">
       <Content>
         <Suspense
           fallback={
             <div
               style={{
-                height: '100vh',
+                height: 'calc(100vh - @content-paddingTop)',
                 width: '100%',
                 background: '#fff',
               }}

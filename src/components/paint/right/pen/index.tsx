@@ -12,7 +12,7 @@ interface PenType {
 }
 
 const ShowPen = (props: PenType) => {
-  const lineWidthContext: any = useContext(LineWidthContext);
+  const lineWidthContext = useContext(LineWidthContext);
 
   const { lineSize, maxSize } = props;
   return (

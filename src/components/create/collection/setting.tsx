@@ -23,7 +23,7 @@ const CollectionSetting = (props: Props) => {
   const settingForm: React.MutableRefObject<any> = React.useRef();
   const defaultValue = {
     isFree: !!uploadedImage.collectModule.amount || false,
-    royalty: uploadedImage.royalty || '0',
+    royalty: uploadedImage.royalty || 0,
     collectLimit: uploadedImage.collectModule.collectLimit || '5000',
     timeLimit: uploadedImage.collectModule.timeLimit || 1,
     amount: uploadedImage.collectModule.amount || 0,

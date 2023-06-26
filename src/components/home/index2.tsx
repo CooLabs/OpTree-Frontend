@@ -16,7 +16,7 @@ const Home2 = () => {
                     <Button className="white-btn margin-top-40">Get start</Button>
                 </Link> 
             </div>
-            <div className="column-2 margin-top-20">
+            <div className="column-2">
                 <div className="flex content-center">
                     <img src={HomePic1} loading="lazy" className="image-3"/>
                 </div>

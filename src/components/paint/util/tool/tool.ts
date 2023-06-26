@@ -1,7 +1,9 @@
+
 export interface Point {
   x: number;
   y: number;
 }
+
 
 
 // 吸色功能

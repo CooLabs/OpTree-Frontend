@@ -119,11 +119,11 @@ const CreateNewNFT = (props) => {
         metadata_id: uuidv4(),
         description: trimify(data.description),
         content: trimify(
-          `**I'm particpating a fantasitic collection on OpTree.**\n**This is my work.**\n${OPTREE_WEBSITE_URL}/collections/${id}/${collectionId}`
+          `**I'm particpating a fantasitic collection on OpTree.**\n**This is my work.**\n${OPTREE_WEBSITE_URL}/#/collections/${id}/${collectionId}`
         ),
         locale: getUserLocale(),
         mainContentFocus: PublicationMainFocus.Image,
-        external_url: `${OPTREE_WEBSITE_URL}/${trimify(data.title)}`,
+        external_link: `${OPTREE_WEBSITE_URL}`,
         image: imageSource,
         name: trimify(data.title),
         attributes,

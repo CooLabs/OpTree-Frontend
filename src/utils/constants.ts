@@ -14,7 +14,7 @@ export const LOGO_ASSETS = 'https://ik.imagekit.io/lens/media-snapshot/tr:w-100,
 export const STATIC_ASSETS = 'https://static.optree.xyz'
 export const OPTREE_WEBSITE_URL = IS_MAINNET
   ? 'https://optree.xyz'
-  : 'https://testnet.optree.xyz'
+  : 'https://op-tree-frontend.vercel.app'
 export const FALLBACK_COVER_URL = `${STATIC_ASSETS}/images/fallbackThumbnail.png`
 export const OG_IMAGE = `${STATIC_ASSETS}/images/seo/og.png`
 export const SCROLL_ROOT_MARGIN = '60% 0px'

@@ -260,7 +260,7 @@ const Canvas: FC<CanvasProps> = (props) => {
           img.crossOrigin = "anonymous";
           img.src = imgSrc;
           img.onload = function () {
-            let boxArr: Array<Pixel> = [];
+            let boxArr:Array<Pixel> = [];
             ctx.drawImage(img, 0, 0, img.width, img.height);
             const imgData = ctx?.getImageData(0, 0, img.width, img.height);
             const data = imgData.data;

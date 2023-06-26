@@ -89,11 +89,13 @@ export const getNewCollectionCreated = async (size:number, offset:number)=>{
   let response: {data: {newCollectionCreateds: NewCollectionCreateds[]}} = await client.query({query: newCollectionCreatedsDoc})
   console.log('getNewCollectionCreated response',response)
   let collections = await Promise.all(response.data.newCollectionCreateds.map(async (collection: NewCollectionCreateds) => {
+    if(parseInt(collection.collectionId) < 4) return
     let url = sanitizeDStorageUrl(collection.collInfoURI);
     let json: any = await getReq(url)
     return {...collection, detailJson: json}
   }))
-  return collections
+  console.log('collections',collections, collections.filter((item)=>!!item))
+  return collections.filter((item)=>!!item)
 }
 
 export const getNewNFTCreateds = async( collectionId: string, size:number, offset:number)=>{

@@ -3524,7 +3524,7 @@ export type PublicationMetadataV2Input = {
    * This is the URL that will appear below the asset's image on OpenSea and others etc
    *       and will allow users to leave OpenSea and view the item on the site.
    */
-  external_url?: InputMaybe<Scalars['Url']['input']>
+  external_link?: InputMaybe<Scalars['Url']['input']>
   /** legacy to support OpenSea will store any NFT image here. */
   image?: InputMaybe<Scalars['Url']['input']>
   /** This is the mime type of the image. This is used if your uploading more advanced cover images as sometimes ipfs does not emit the content header so this solves that */

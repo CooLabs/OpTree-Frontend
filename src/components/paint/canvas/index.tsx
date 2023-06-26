@@ -29,7 +29,7 @@ interface CanvasProps {
   shapeType: ShapeToolType;
   shapeOutlineType: ShapeOutlineType;
   lineWidthType: LineWidthType;
-  strawType: boolean;
+  strawType?: boolean;
   mainColor: string;
   subColor: string;
   lineSize?: number;
@@ -55,7 +55,7 @@ const maxScale = 6;
 const minScale = 0.1;
 const scaleStep = 0.1;
 
-const Canvas: FC<CanvasProps> = (props) => {
+const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
   const {
     id,
     toolType,
@@ -70,7 +70,7 @@ const Canvas: FC<CanvasProps> = (props) => {
     fontStyle,
     imgSrc,
     background,
-    strawType,
+    strawType=false,
     lineSize = 1,
   } = props;
   const [tool, setTool] = useState<Tool>();

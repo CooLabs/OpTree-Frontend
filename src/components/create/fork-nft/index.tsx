@@ -130,11 +130,11 @@ const ForkPaintNFT = (props) => {
         metadata_id: uuidv4(),
         description: trimify(uploadedImage.description),
         content: trimify(
-          `**I'm particpating a fantasitic collection on OpTree.**\n**This is my work.**\n${OPTREE_WEBSITE_URL}/collections/${id}/${collectionId}`
+          `**I'm particpating a fantasitic collection on OpTree.**\n**This is my work.**\n${OPTREE_WEBSITE_URL}/#/collections/${id}/${collectionId}`
         ),
         locale: getUserLocale(),
         mainContentFocus: PublicationMainFocus.Image,
-        external_url: `${OPTREE_WEBSITE_URL}/${trimify(uploadedImage.title)}`,
+        external_link: `${OPTREE_WEBSITE_URL}`,
         image: imageSource,
         name: trimify(uploadedImage.title),
         attributes,

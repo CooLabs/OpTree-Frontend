@@ -21,7 +21,7 @@ class CollectionStore {
     callback?: Function
   ) {
     this.loading = true;
-    getNewCollectionCreated(size, offset).then((res)=>{
+    getNewCollectionCreated(size, offset).then((res:any)=>{
       runInAction(() => {
         this.collectionList = res;
         this.loading = false

@@ -17,7 +17,7 @@ const Home3 = () => {
         <h1 className="margin-top-20">Ongoing Collection</h1>
         <div className="margin-top-40 flex">
           {
-            collectionList?.map((item, index) => {
+            collectionList?.slice(0,4).map((item, index) => {
               return <div className="flex1" key={index}>
                 <img  
                   src={item.detailJson.image ? sanitizeDStorageUrl(item.detailJson.image): bg}>
