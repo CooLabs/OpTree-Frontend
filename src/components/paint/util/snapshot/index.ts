@@ -1,4 +1,4 @@
-const MAX_DATA_LENGTH = 10;
+const MAX_DATA_LENGTH = 50;
 
 /**
  * 使用两个栈实现canvas前进后退动作
@@ -13,21 +13,6 @@ class Snapshot {
     this.imageData1.push(imageData);
   }
  
-  public clear(type?:string) {
-    switch (type) {
-      case 'back':
-        this.imageData2 = []
-        break;
-      case 'forward':
-       this.imageData1 = []
-        break;
-      default:
-      this.imageData1 = []
-        this.imageData2 = []
-        break
-     }
-  
-  }
 
 
   public getCurrent() {
@@ -48,16 +33,6 @@ class Snapshot {
       this.imageData1.push(imageData);
     }
     return this.imageData1.length > 0 ? this.imageData1[this.imageData1.length - 1] : null;
-  }
-  public getImageDatalist(type:string) { 
-    switch (type) {
-      case "back":
-        return this.imageData1;
-      case 'forward':
-        return this.imageData2;
-      default:
-        return undefined
-    }
   }
 }
 

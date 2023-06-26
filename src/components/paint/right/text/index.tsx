@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useContext } from "react";
-import { TextContext } from "@/components/paint/context";
+import { TextContext, ColorContext } from "@/components/paint/context";
+import { ColorBox, createColor } from "material-ui-color";
 import "./index.less";
+import { useState } from "react";
+import { useEffect } from "react";
 import { Select } from "antd";
 import IntegerStep from "../components/slider";
 import ColorPanel from "../components/colorPanel";
 import { useMemo } from "react";
-import { DownOutlined } from "@ant-design/icons";
-import arrow from "@/assets/icon/arrow.svg";
 
 const { Option } = Select;
 
 interface FormatColor {
   className?: string;
-  maxSize?: number;
 }
 
 const textFamily = [
@@ -26,34 +26,23 @@ const textFamily = [
   "Poppins-Medium",
   "Poppins-Regular",
   "Poppins-SemiBold",
-  "System Font",
 ];
 
 const FormatColor: React.FC<FormatColor> = (props) => {
-  const { className, maxSize = 100 } = props;
+  const { className } = props;
+  const [pickerColor, setPickerColor] = useState(createColor("#000000FF"));
   const TextToolContext = useContext(TextContext);
+  const colorContext = useContext(ColorContext);
+
   const fontStyle = useMemo(() => {
     return TextToolContext.fontStyle;
   }, [TextToolContext.fontStyle]);
 
-  useEffect(() => {
-    TextToolContext.setFont({
-      ...fontStyle,
-      fontSize: maxSize / 2,
-    });
-    // TextToolContext.fontStyle.fontSize = maxSize / 2;
-  }, [maxSize]);
+  const activeColorType = colorContext.activeColor;
 
-  const handleChange = (type: string, value: string | number) => {
-    const textBox = document.getElementById("textBox");
-    if (textBox && textBox.style.display !== "none") {
-      textBox.setAttribute("style", `z-index:-1;display:none`);
-    }
-    TextToolContext.setFont({
-      ...fontStyle,
-      [type]: value,
-    });
-  };
+  useEffect(() => {
+    colorContext.setColor(`#${pickerColor.hex}`);
+  }, [pickerColor]);
 
   return (
     <div
@@ -61,20 +50,17 @@ const FormatColor: React.FC<FormatColor> = (props) => {
         className ? `ccc-text formatColor ${className}` : "ccc-text colorpanel"
       }
     >
-      <div className="ccc-text-box">
+      <div className="content">
         <div>
           <h3>Font</h3>
           <Select
-            defaultValue="System Font"
-            className="ccc-text-family paint-select"
-            dropdownClassName="paint-select-dropCard"
-            //  open={true}
+            className="ccc-text-family"
             onChange={(value: string) => {
-              handleChange("fontFamily", value);
+              TextToolContext.setFont({
+                ...fontStyle,
+                fontFamily: value,
+              });
             }}
-            suffixIcon={
-              <img style={{ width: "15px", marginRight: "10px" }} src={arrow} />
-            }
           >
             {textFamily.map((va) => {
               return (
@@ -91,12 +77,10 @@ const FormatColor: React.FC<FormatColor> = (props) => {
             min={1}
             max={8}
             onPropsChange={(value) => {
-              handleChange("letterSpacing", value + "px");
-
-              // TextToolContext.setFont({
-              //   ...fontStyle,
-              //   letterSpacing: value + "px",
-              // });
+              TextToolContext.setFont({
+                ...fontStyle,
+                letterSpacing: value + "px",
+              });
             }}
           />
         </div>
@@ -104,30 +88,28 @@ const FormatColor: React.FC<FormatColor> = (props) => {
           <h3>Font Size</h3>
           <IntegerStep
             min={12}
-            max={maxSize * 2}
-            value={Math.ceil(maxSize / 2)}
-            onPropsChange={(value) => {
-              handleChange("fontSize", value);
-              // TextToolContext.setFont({
-              //   ...fontStyle,
-              //   fontSize: value,
-              // });
-            }}
-          />
-        </div>
-        {/* <div className="font">
-          <h3>Line Height</h3>
-          <IntegerStep
-            min={24}
-            max={maxSize}
+            max={72}
             onPropsChange={(value) => {
               TextToolContext.setFont({
                 ...fontStyle,
-                lineHeight: value,
+                fontSize: value + "px",
               });
             }}
-          /> 
-        </div> */}
+          />
+        </div>
+        <div className="font">
+          <h3>Line Height</h3>
+          <IntegerStep
+            min={24}
+            max={56}
+            onPropsChange={(value) => {
+              TextToolContext.setFont({
+                ...fontStyle,
+                lineHeight: value + "px",
+              });
+            }}
+          />
+        </div>
         <div className="material-color-box">
           <ColorPanel
             type="text"

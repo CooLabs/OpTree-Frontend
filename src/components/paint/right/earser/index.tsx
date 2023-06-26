@@ -6,20 +6,18 @@ import "./index.less";
 
 interface earserType {
   lineSize: number;
-  maxSize: number;
 }
 
 const Eraser = (props: earserType) => {
-  const { lineSize, maxSize } = props;
+  const { lineSize } = props;
   const lineWidthContext = useContext(LineWidthContext);
-
   return (
     <div className="ccc-pen">
       <div className="ccc-slider-item">
         <h3>Eraser Thickness</h3>
         <IntegerStep
           min={1}
-          max={maxSize}
+          max={20}
           value={lineSize}
           onPropsChange={(value) => {
             lineWidthContext.setLineSize(value);

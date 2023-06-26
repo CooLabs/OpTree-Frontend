@@ -1,16 +1,14 @@
-
 export interface Point {
   x: number;
   y: number;
 }
 
 
-
 // 吸色功能
 export const setStraw = (pos?: Point) => {
   if (Tool.strawFlag && pos) {
     // 吸色
-    const color =  getPixelColorOnCanvas(Tool.ctx, pos.x, pos!.y);
+    const color = getPixelColorOnCanvas(Tool.ctx, pos.x, pos!.y);
     Tool.strawColor = color;
     Tool.strawFlag = false;
   } 
@@ -18,25 +16,13 @@ export const setStraw = (pos?: Point) => {
 };
 
 
-export const getMousePos = (canvas: HTMLCanvasElement, event: MouseEvent|undefined, type?: string,pos?: Point): Point => {
+export const getMousePos = (canvas: HTMLCanvasElement, event: MouseEvent, type?: string): Point => {
   const rect = canvas.getBoundingClientRect();
   const scale = Tool.currentScale || 1
-  if (pos) { 
-    return {
-      x: (pos.x - rect.left) / scale,
-      y: (pos.y - rect.top) / scale,
-  };
-  }
-  if (event) {
-        return {
-            x: (event.clientX - rect.left)/scale,
-            y: (event.clientY - rect.top)/scale
-          };
-  }
   return {
-    x: 0,
-    y:0
-  }
+    x: (event.clientX - rect.left)/scale,
+    y: (event.clientY - rect.top)/scale
+  };
 };
 
 export const getTouchPos = (canvas: HTMLCanvasElement, event: TouchEvent): Point => {
@@ -103,7 +89,9 @@ export const updateImageData = (origin: ImageData, data: ImageData, fillData: [n
 };
 
 export const clacArea = (points: Point) => {
-  return Tool.showArea ? Tool.showArea.find(item => item[0] === points.x && item[1] === points.y):true
+  const x = Math.trunc(points.x)
+  const y = Math.trunc(points.y)
+  return Tool.showArea ? Tool.showArea.find(item => item[0] === x && item[1] === y):true
 }
 
 export default class Tool {
@@ -126,23 +114,8 @@ export default class Tool {
   // 背景色
   public static fillColor = "#2d2d2d";
 
-  // textCanvas
-  public static textList: Record<string, any> = {};
-  
-  //像素风基本设置
-  public static OptPixel = {
-  stepX: 2,
-  stepY: 2,
-  EMPTY_COLOR: "#fff",
-  size:2,
-  penHeight : 2
-};
 
-//是否像素风
-  public static isPixel = false;
-  
-  //像素风格子数组、
-  public static PixelBoxs:any[] = [];
+
   public static zoom = {
     scaleX:1,
     scaleY:1
@@ -158,7 +131,6 @@ export default class Tool {
   static show_offset: any;
   static strawFlag: boolean;
   static mainColor: string;
-  static translate: { translatex: number; translatey: number; };
 
   public onMouseDown(event: MouseEvent): void {
     //
@@ -183,9 +155,7 @@ export default class Tool {
   public onTouchEnd(event: TouchEvent): void {
     //
   }
+ 
 
-  public onKeyDown(event: KeyboardEvent): void { 
-    //
-  }
  
 }

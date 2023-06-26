@@ -1,5 +1,4 @@
 import {ShapeToolType} from "../toolType";
-import { drawColorToPixel, updatePixelBoxs } from "./pixelUtil";
 import Tool, {Point, getMousePos, getTouchPos,setStraw, hexToRgb,clacArea, updateImageData} from "./tool";
 
 /**
@@ -115,7 +114,6 @@ class Shape extends Tool {
     private lineWidthBase = 1;
     public isDashed = false;
     private dashLineStyle = [10, 10];
-    static shapeWidth: any = 1;
     public constructor(type: ShapeToolType, dashed = false) {
         super();
         this.type = type;
@@ -127,51 +125,53 @@ class Shape extends Tool {
     }
 
     private operateStart(pos: { x: number; y: number }) {
+         
         setStraw(pos)
-        const lineWidth = Shape.shapeWidth || 1;
         this.saveImageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
         this.isMouseDown = true;
         this.mouseDownPos = pos;
         Tool.ctx.strokeStyle = Tool.mainColor;
-        Tool.ctx.lineWidth = Tool.isPixel?lineWidth*Tool.OptPixel.size:lineWidth;//5// Tool.lineWidthFactor * this.lineWidthBase;
+        Tool.ctx.lineWidth = Tool.lineWidthFactor * this.lineWidthBase;
         Tool.ctx.fillStyle = Tool.subColor;
         if (this.isDashed) {
             Tool.ctx.setLineDash(this.dashLineStyle);
         }
-
     }
 
-    private operateMove(pos: { x: number; y: number }) {
-        const ctx = Tool.ctx;
+    private operateMove(pos: {x: number; y: number}) {
         if (this.isMouseDown && this.saveImageData) {
+            const ctx = Tool.ctx;
             ctx.clearRect(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
+
             ctx.putImageData(this.saveImageData, 0, 0);
             const vertexs: Point[] = getVertexs(this.type, this.mouseDownPos.x, this.mouseDownPos.y, pos.x, pos.y);
+
             if (this.type === ShapeToolType.CIRCLE) {
                 ctx.beginPath();
                 ctx.ellipse(vertexs[0].x, vertexs[0].y, Math.abs(0.5 * (pos.x - this.mouseDownPos.x)), Math.abs(0.5 * (pos.y - this.mouseDownPos.y)), 0, 0, Math.PI * 2);
                 ctx.stroke();
             } else {
                 ctx.beginPath();
-                 ctx.moveTo(vertexs[0].x, vertexs[0].y);
+                ctx.moveTo(vertexs[0].x, vertexs[0].y);
                 for (let i = 1; i < vertexs.length; i++) {
                     ctx.lineTo(vertexs[i].x, vertexs[i].y);
                 }
                 ctx.closePath();
                 ctx.stroke();
             }
-                         if (Tool.isPixel) { 
-         updatePixelBoxs(Tool.ctx);
-        }
-      
         }
     }
-    
     private operateEnd() {
         Tool.ctx.setLineDash([]);
-        if (Tool.isPixel) { 
-         updatePixelBoxs(Tool.ctx);
+        let imageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
+
+        const colorRgb = hexToRgb(Tool.mainColor);
+        if (colorRgb && this.saveImageData) {
+            imageData = updateImageData(this.saveImageData, imageData, [colorRgb.r, colorRgb.g, colorRgb.b, colorRgb.a]);
+
+            Tool.ctx.putImageData(imageData, 0, 0);
         }
+        
         this.isMouseDown = false;
         this.saveImageData = undefined;
     }
@@ -179,7 +179,7 @@ class Shape extends Tool {
     public onMouseDown(event: MouseEvent): void {
         event.preventDefault();
         const mousePos = getMousePos(Tool.ctx.canvas, event);
-          if (clacArea(mousePos)) { 
+        if (clacArea(mousePos)) { 
             this.operateStart(mousePos);
           }
     }
@@ -187,7 +187,9 @@ class Shape extends Tool {
     public onMouseMove(event: MouseEvent): void {
         event.preventDefault();
         const mousePos = getMousePos(Tool.ctx.canvas, event);
-        this.operateMove(mousePos);
+         if (clacArea(mousePos)) { 
+            this.operateMove(mousePos);
+          }
     }
 
     public onMouseUp(event: MouseEvent): void {
@@ -201,8 +203,10 @@ class Shape extends Tool {
         }
         const canvas = event.target as HTMLCanvasElement;
         const touchPos = getTouchPos(canvas, event);
-
-        this.operateStart(touchPos);
+        if (clacArea(touchPos)) { 
+            this.operateStart(touchPos);
+          }
+        //this.operateStart(touchPos);
     }
 
     public onTouchMove(event: TouchEvent): void {
@@ -211,8 +215,9 @@ class Shape extends Tool {
         }
         const canvas = event.target as HTMLCanvasElement;
         const touchPos = getTouchPos(canvas, event);
-
-        this.operateMove(touchPos);
+        if (clacArea(touchPos)) { 
+            this.operateMove(touchPos);
+        }
     }
 
     public onTouchEnd(event: TouchEvent): void {

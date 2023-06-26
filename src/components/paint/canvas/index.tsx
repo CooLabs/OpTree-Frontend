@@ -2,8 +2,6 @@ import React, { useMemo } from "react";
 import "./index.less";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { Input } from "antd";
-
 import {
   LineWidthType,
   ShapeOutlineType,
@@ -18,11 +16,11 @@ import { useContext } from "react";
 import { DispatcherContext } from "../context";
 import { CLEAR_EVENT, REDO_EVENT, UNDO_EVENT } from "../util/dispatcher/event";
 import SnapShot from "../util/snapshot";
+import { Input } from "antd";
 import cursorPen from "@/assets/icon/cursorPen.jpg";
 import cursorErase from "@/assets/icon/cursorErase.jpg";
 import straw from "@/assets/icon/straw.jpg";
-import bucket from "@/assets/icon/bucket.jpg";
-const { TextArea } = Input;
+import { getScale } from "./utils";
 
 interface CanvasProps {
   toolType: ToolType;
@@ -36,7 +34,7 @@ interface CanvasProps {
   fillColor: string;
   fontStyle: any;
   imgSrc?: string;
-  CanvasSize?: {
+  CanvasSize: {
     width: number;
     height: number;
   };
@@ -55,7 +53,7 @@ const maxScale = 6;
 const minScale = 0.1;
 const scaleStep = 0.1;
 
-const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
+const Canvas: FC<CanvasProps> = (props) => {
   const {
     id,
     toolType,
@@ -70,7 +68,7 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
     fontStyle,
     imgSrc,
     background,
-    strawType=false,
+    strawType,
     lineSize = 1,
   } = props;
   const [tool, setTool] = useState<Tool>();
@@ -80,7 +78,6 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
   const textBoxRef = useRef<HTMLTextAreaElement>(null);
   const dispatcherContext = useContext(DispatcherContext);
   const [snapshot] = useState<SnapShot>(new SnapShot());
-  const [text, setText] = useState("");
 
   useEffect(() => {
     showCanvasCursor();
@@ -154,7 +151,7 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
     const canvas = canvasRef.current;
     if (canvas) {
       showCanvasCursor();
-      // drawCanvas();
+      drawCanvas();
       Tool.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
       // 注册清空画布事件
       const dispatcher = dispatcherContext.dispatcher;
@@ -227,27 +224,21 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
   //鼠标icon
   const showCanvasCursor = () => {
     const canvas = canvasRef.current;
-    const textBox: any = textBoxRef.current;
-    const showText = textBox?.resizableTextArea?.textArea;
-    if (text) {
-      setText("");
-    }
+    const textBox = textBoxRef.current;
     if (canvas) {
       if (strawType) {
         //吸色
-        return (canvas.style.cursor = `url(${straw}) 12 16,auto`);
+        return (canvas.style.cursor = `url(${straw}),auto`);
       }
       if (toolType === 0) {
         canvas.style.cursor = `url(${cursorPen}) 12 16,auto`;
       } else if (toolType === 4) {
-        canvas.style.cursor = `url(${cursorErase}) 12 16,auto`;
-      } else if (toolType === 1) {
-        canvas.style.cursor = `url(${bucket}) 12 16,auto`;
+        canvas.style.cursor = `url(${cursorErase}),auto`;
       } else {
         canvas.style.cursor = `auto`;
       }
-      if (toolType !== 2 && textBox && showText) {
-        showText!.setAttribute("style", `z-index:-1;display:none`);
+      if (toolType !== 2) {
+        textBox!.setAttribute("style", `z-index:-1;display:none`);
       }
     }
   };
@@ -295,35 +286,29 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
       drawCanvas();
       const height = container!.clientHeight;
       const width = container!.clientWidth;
-      const showScale =
-        Math.min(width, height) /
-          Math.max(CanvasSize.height, CanvasSize.width) || 1;
-      show_scale = showScale; //getScale({ width, height }, CanvasSize);
+      show_scale = getScale({ width, height }, CanvasSize);
       Tool.currentScale = show_scale;
-      translatex = (width - CanvasSize.width * show_scale) / 2 / show_scale;
+      translatex = (width - CanvasSize.width * show_scale) / 2;
       translatey = (height - CanvasSize.height * show_scale) / 2;
-      Tool.translate = {
-        translatex,
-        translatey,
-      };
-      canvas.style.transform = `scale(${show_scale}) translate(${translatex}px,${translatey}px)`;
-      //canvas.style.transform = `translate(${translatex}px,${translatey}px)`;
+      console.log("===345", width, translatex, CanvasSize, show_scale);
+      canvas!.style.transform = `translate3d(${translatex}px, ${translatey}px, 0px) scale(${show_scale})`;
+      //canvas.style.transform = `scale(${show_scale}) translate3d(${translatex}px,${translatey}px, 0px)`;
     }
   }, [CanvasSize]);
 
   const onMouseDown = (event: MouseEvent) => {
-    // if (text) {
-    //   setText("");
-    // }
     if (tool) {
       tool.onMouseDown(event);
     }
   };
 
-  const onMouseUp = (event: MouseEvent) => {
-    if (text) {
-      setText("");
+  const onMouseMove = (event: MouseEvent) => {
+    if (tool) {
+      tool.onMouseMove(event);
     }
+  };
+
+  const onMouseUp = (event: MouseEvent) => {
     if (tool) {
       tool.onMouseUp(event);
       // 存储canvas剪影
@@ -388,17 +373,12 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
     return trans;
   };
 
-  const onMousewheel = (event: WheelEvent) => {
+  const onMousewheel = (event: any) => {
     event.preventDefault();
-    if (toolType === ToolType.TEXT) {
-      return;
-    }
     const canvas = canvasRef.current;
     const container = allCanvasRef!.current;
     const { clientX, clientY, deltaX, deltaY, ctrlKey } = event;
     const { width, height, x, y } = container!.getBoundingClientRect();
-    const { width: canvasWidth, height: canvasHeight } =
-      container!.getBoundingClientRect();
     let newScale;
     if (ctrlKey) {
       //双指放大缩小
@@ -439,71 +419,22 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
       translatey = translatey - transY;
       show_scale = newScale;
       Tool.currentScale = newScale;
-      Tool.translate = {
-        translatex,
-        translatey,
-      };
       canvas!.style.transform = `translate3d(${translatex}px, ${translatey}px, 0px) scale(${show_scale})`;
-    }
-    // else {
-    //   if (!!deltaX && !deltaY) {
-    //     // if (translatex > 0 && translatex < width) {
-    //     // 左右移动 向右 -deltaX < 0  向左   >0
-    //     translatex = Number((translatex - deltaX).toFixed(3));
-    //     // }
-    //   } else if (!!deltaY && !deltaX) {
-    //     // if (translatey > 0 && translatex < height) {
-    //     // 左右移动 向右 -deltaX < 0  向左   >0
-    //     translatey = Number((translatey - deltaY).toFixed(3));
-    //     // }
-    //   }
-    // }
-  };
-
-  const onCanvasBoxWheel = (event: WheelEvent) => {
-    const { clientX, clientY, deltaX, deltaY, ctrlKey } = event;
-    event.preventDefault();
-    if (toolType === ToolType.TEXT) {
-      return;
-    }
-    const canvas = canvasRef.current;
-    if (!ctrlKey) {
+    } else {
       if (!!deltaX && !deltaY) {
-        // if (translatex > 0 && translatex < width) {
         // 左右移动 向右 -deltaX < 0  向左   >0
-        translatex = Number((translatex - deltaX).toFixed(3));
-        // }
+        translatex = translatex - deltaX;
       } else if (!!deltaY && !deltaX) {
-        // if (translatey > 0 && translatex < height) {
-        // 左右移动 向右 -deltaX < 0  向左   >0
-        translatey = Number((translatey - deltaY).toFixed(3));
-        // }
+        translatey = translatey - deltaY;
       }
-      Tool.translate = {
-        translatex,
-        translatey,
-      };
-      canvas!.style.transform = `translate(${translatex}px, ${translatey}px) scale(${show_scale})`;
-    }
-  };
 
-  const onKeyDown = (e: KeyboardEvent) => {
-    if (tool) {
-      tool.onKeyDown(e);
-    }
-  };
-
-  const onMouseMove = (event: MouseEvent) => {
-    if (tool) {
-      tool.onMouseMove(event);
+      canvas!.style.transform = `translate3d(${translatex}px, ${translatey}px, 0px) scale(${show_scale})`;
     }
   };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    // const textBox = textBoxRef.current;
-    const canvasBox = allCanvasRef.current;
-    if (canvas && canvasBox) {
+    if (canvas) {
       canvas.addEventListener("mousedown", onMouseDown);
       canvas.addEventListener("mousemove", onMouseMove);
       canvas.addEventListener("mouseup", onMouseUp);
@@ -511,9 +442,6 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
       canvas.addEventListener("touchstart", onTouchStart);
       canvas.addEventListener("touchmove", onTouchMove);
       canvas.addEventListener("touchend", onTouchEnd);
-      window.addEventListener("keydown", onKeyDown);
-      // textBox.addEventListener("keydown", onKeyDown);
-      canvasBox.addEventListener("wheel", onCanvasBoxWheel, { passive: false });
 
       return () => {
         canvas.removeEventListener("mousedown", onMouseDown);
@@ -524,9 +452,6 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
         canvas.removeEventListener("touchstart", onTouchStart);
         canvas.removeEventListener("touchmove", onTouchMove);
         canvas.removeEventListener("touchend", onTouchEnd);
-        // textBox.removeEventListener("keydown", onKeyDown);
-
-        canvasBox.removeEventListener("wheel", onCanvasBoxWheel);
       };
     }
   }, [canvasRef, onMouseDown, onMouseMove, onMouseUp]);
@@ -542,25 +467,25 @@ const Canvas: FC<CanvasProps> = (props: CanvasProps) => {
     }
   }
   return (
-    <div className="all-canvas" ref={allCanvasRef} id="all-canvas">
+    <div className="all-canvas" ref={allCanvasRef}>
       <canvas
         id={`ccc-paint-canvas ${id}`}
         className="ccc-paint-canvas"
         ref={canvasRef}
         style={{
-          background: background,
+          background: background || "#2d2d2d",
           ...style,
         }}
       ></canvas>
       <div className="canvas-text" id="text-container" ref={canvasTextRef}>
-        <TextArea
-          id="textBox"
+        <textarea
           ref={textBoxRef}
-          autoSize={true}
-          size={"small"}
+          id="textBox"
           name="story"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          autoFocus={true}
+          //autocomplete={fales}
+          //bordered={true}
+          // autoSize={{ minRows: 2, maxRows: 2 }}
           className={`text-box`}
           // rows={1}
         />

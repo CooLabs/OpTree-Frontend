@@ -1,10 +1,9 @@
 import { ColorType } from "../toolType";
-import { drawColorToPixel, getPixelColorOnPixelBoxs, updatePixelBoxs } from "./pixelUtil";
 import Tool, { Point, getMousePos, getPixelColorOnCanvas, getTouchPos, hexToRgb, updateImageData, clacArea } from "./tool";
 class Eraser extends Tool {
   protected lineWidthBase = 1;
   private mouseDown = false;
-  private color = "";
+  private color = "transparent";
   private saveImageData?: ImageData;
   private previousPos: Point = {
     x: 0,
@@ -13,39 +12,22 @@ class Eraser extends Tool {
   public constructor(lineSize:number) {
     super();
     this.lineWidthBase = lineSize;
-    this.color = "";
+    this.color = "transparent";
   }
   private operateStart(pos: Point) {
     if (!Tool.ctx) return;
     this.saveImageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
     this.mouseDown = true;
-    this.previousPos = pos;
-        Tool.ctx.lineWidth =Tool.isPixel ? this.lineWidthBase*Tool.OptPixel.size/2: this.lineWidthBase;
-
-    const newPos = {
-      x: pos.x -   Tool.ctx.lineWidth,
-      y:pos.y -   Tool.ctx.lineWidth
-    }
-
-    this.color = Tool.isPixel ? getPixelColorOnPixelBoxs(newPos) : getPixelColorOnCanvas(Tool.ctx, pos.x - 2, pos.y - 2);
-            console.log(this.color)
-
+    this.color = getPixelColorOnCanvas(Tool.ctx, pos.x - 2, pos.y - 2);
+    Tool.ctx.lineWidth = 3 * this.lineWidthBase;
     Tool.ctx.strokeStyle = this.color;
     Tool.ctx.lineJoin = "round";
     Tool.ctx.lineCap = "round";
     Tool.ctx.beginPath();
-     if (Tool.isPixel) { 
-       drawColorToPixel(pos, pos, this.color);
-    }
+    this.previousPos = pos;
   }
   private operateMove(pos: Point) {
     if (this.mouseDown) {
-      if (Tool.isPixel) { 
-				drawColorToPixel(this.previousPos, pos, this.color);
-           this.previousPos = pos;
-           return
-         }
-      
       Tool.ctx.moveTo(this.previousPos.x, this.previousPos.y);
       const c = 0.5 * (this.previousPos.x + pos.x);
       const d = 0.5 * (this.previousPos.y + pos.y);
@@ -56,24 +38,21 @@ class Eraser extends Tool {
   }
   private operateEnd() {
     if (this.mouseDown) {
-        Tool.ctx.closePath();
-        this.mouseDown = false;
-      if (!Tool.isPixel) {
-        let imageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
-        const colorRgb = hexToRgb(this.color);
-        if (colorRgb && this.saveImageData) {
-          imageData = updateImageData(this.saveImageData, imageData, [colorRgb.r, colorRgb.g, colorRgb.b, colorRgb.a]);
-          Tool.ctx.putImageData(imageData, 0, 0);
-        }
-      } else { 
-          updatePixelBoxs(Tool.ctx)
+      Tool.ctx.closePath();
+      this.mouseDown = false;
+      let imageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
+      const colorRgb = hexToRgb(this.color);
+      if (colorRgb && this.saveImageData) {
+        imageData = updateImageData(this.saveImageData, imageData, [colorRgb.r, colorRgb.g, colorRgb.b, colorRgb.a]);
+
+        Tool.ctx.putImageData(imageData, 0, 0);
       }
     }
   }
   public onMouseDown(event: MouseEvent): void {
     event.preventDefault();
 
-    const mousePos = getMousePos(Tool.ctx.canvas, event);
+    const mousePos = getMousePos(Tool.ctx.canvas, event,'eraser');
 
       if (clacArea(mousePos)) { 
     this.operateStart(mousePos);
@@ -88,7 +67,10 @@ class Eraser extends Tool {
   public onMouseMove(event: MouseEvent): void {
     event.preventDefault();
     const mousePos = getMousePos(Tool.ctx.canvas, event);
+      if (clacArea(mousePos)) { 
     this.operateMove(mousePos);
+    }
+    //this.operateMove(mousePos);
   }
 
   public onTouchStart(event: TouchEvent): void {
@@ -96,7 +78,10 @@ class Eraser extends Tool {
       event.preventDefault();
     }
     const touchPos = getTouchPos(event.target as HTMLCanvasElement, event);
+     if (clacArea(touchPos)) { 
     this.operateStart(touchPos);
+    }
+   // this.operateStart(touchPos);
   }
 
   public onTouchMove(event: TouchEvent): void {
@@ -104,7 +89,10 @@ class Eraser extends Tool {
       event.preventDefault();
     }
     const touchPos = getTouchPos(event.target as HTMLCanvasElement, event);
+     if (clacArea(touchPos)) { 
     this.operateMove(touchPos);
+    }
+   // this.operateMove(touchPos);
   }
 
   public onTouchEnd(event: TouchEvent): void {
@@ -116,5 +104,3 @@ class Eraser extends Tool {
 }
 
 export default Eraser;
-
-

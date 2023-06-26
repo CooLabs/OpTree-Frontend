@@ -25,7 +25,6 @@ import shape_arrowright from "@/assets/icon/shape_arrowright.svg";
 import shape_arrowdown from "@/assets/icon/shape_arrowdown.svg";
 import shape_arrowleft from "@/assets/icon/shape_arrowleft.svg";
 import shape_fourstar from "@/assets/icon/shape_fourstar.svg";
-import arrow from "@/assets/icon/arrow.svg";
 const selectedShapeClass = "selected-shape";
 
 const shapes = [
@@ -104,15 +103,10 @@ const ShapePanel: React.FC<ShapePanelProps> = (props) => {
       <div className="shape-container">
         <div className="shape-style">
           <Select
-            className="ccc-text-family paint-select"
-            dropdownClassName="paint-select-dropCard"
             style={{ width: "100%" }}
             value={shapeOutlineContext.type}
             onChange={(value) =>
               shapeOutlineContext.setType(value as ShapeOutlineType)
-            }
-            suffixIcon={
-              <img style={{ width: "15px", marginRight: "10px" }} src={arrow} />
             }
           >
             <Select.Option value={ShapeOutlineType.SOLID}>
@@ -123,7 +117,6 @@ const ShapePanel: React.FC<ShapePanelProps> = (props) => {
             </Select.Option>
           </Select>
         </div>
-
         <div className="shape-content">
           <ShapeTypeContext.Consumer>
             {({ type, setType }) =>

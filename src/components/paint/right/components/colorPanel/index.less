@@ -1,7 +1,6 @@
 .colorpanel {
     position: relative;
     .content {
-        margin-top: 40px;
         display: flex;
         flex-direction: column;
         .color-template {
@@ -75,103 +74,59 @@
                 display: inline-block;
             }
         }
-        // .material-color-box {
-        //     width: 100%;
-        //     position: relative;
-        //     .MuiBox-root{
-        //         width: 100% !important;
-        //         overflow:unset !important
-        //     }
-        //     .muicc-colorbox-hsvgradient{
-        //          width: 100% !important;
-        //       margin: 0px!important;
-        //         min-height: 240px;
-        //          >div {
-        //              min-height: 240px !important;
-        //          }
-
-        //     }
-        //     .muicc-colorbox-sliders{
-        //         width: 230px!important;
-        //         margin-left:30px !important;
-        //         padding: 10px 0px !important;
-        //     }
-        //     .muicc-colorbox-inputs{
-        //         align-items: center;
-        //             .muicc-colorbox-colorBg {
-        //                 width: 40px !important;
-        //                 height: 40px !important;
-        //                 border: 0px !important;
-        //                 margin-right: 6px !important;
-
-        //                 .muicc-colorbox-color {
-        //                     width: 40px !important;
-        //                     height: 40px !important;
-        //                     border: 0px !important;
-
-        //                 }
-        //         }
-        //     }
-        // .straw-color {
-        //     position: absolute;
-        //     top: 258px;
-        //     width: 25px;
-        //     display: inline-block;
-        //     text-align: center;
-        //     &:hover {
-        //         background-color:#cbe0f7;
-        //     }
-        // }
-        // .select-item{
-        //     svg {
-        //         fill: #4338ca;
-        //     }
-        // }
-            
-        // }
-
-        .material-color-box{
-            .ccc-paint-colorBox-picker {
-                width: 100%;
-                box-shadow: none !important;
-                padding: 0px !important;
-               
-            
-                .flexbox-fix {
-                    //padding-left: 12% ;
-                    //  &:first-child {
-                    //     // padding-left:12%
-                    //  }
-                    input{
-                        border-radius: 6px;
-                    }
-                    &:last-child {
-                        display: none !important;
-                    }
-                }
-                
+        .material-color-box {
+            width: 100%;
+            position: relative;
+            .MuiBox-root{
+                width: 100% !important;
+                overflow:unset !important
             }
-          
-            .straw-color {
-                position: absolute;
-                bottom: 59px;
-                display: flex;
-                border-radius: 2px;
-                justify-content: center;
+            .muicc-colorbox-hsvgradient{
+                 width: 100% !important;
+              margin: 0px!important;
+                min-height: 240px;
+                 >div {
+                     min-height: 240px !important;
+                 }
+
+            }
+            .muicc-colorbox-sliders{
+                width: 230px!important;
+                margin-left:30px !important;
+                padding: 10px 0px !important;
+            }
+            .muicc-colorbox-inputs{
                 align-items: center;
-                width: 24px;
-                height: 24px;
+                    .muicc-colorbox-colorBg {
+                        width: 40px !important;
+                        height: 40px !important;
+                        border: 0px !important;
+                        margin-right: 6px !important;
 
-                &:hover {
-                    background-color: #cbe0f7;
+                        .muicc-colorbox-color {
+                            width: 40px !important;
+                            height: 40px !important;
+                            border: 0px !important;
+
+                        }
                 }
             }
-
-            .selected-straw {
-                svg {
-                    fill: #4338ca;
-                }
+        .straw-color {
+            position: absolute;
+            top: 258px;
+            width: 25px;
+            display: inline-block;
+            text-align: center;
+            &:hover {
+                background-color:#cbe0f7;
             }
+        }
+        .select-item{
+            svg {
+                fill: #4338ca;
+            }
+        }
+            
         }
     }
 

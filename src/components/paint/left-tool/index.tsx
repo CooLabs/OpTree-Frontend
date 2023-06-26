@@ -14,11 +14,10 @@ const selectedToolClass = "selected-tool";
 export interface ToolPanelProps {
   className?: string;
   fillColor?: string;
-  isPixel?: boolean;
 }
 
 const ToolPanel: React.FC<ToolPanelProps> = (props) => {
-  const { className, fillColor, isPixel=false } = props;
+  const { className, fillColor } = props;
   return (
     <div className={className ? `toolpanel ${className}` : "toolpanel"}>
       <ToolTypeContext.Consumer>
@@ -38,22 +37,20 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
                 {toolPen}
               </span>
             </span>
-            {!isPixel && (
-              <span title="Draw Shape" className="tool-Icon">
-                <span
-                  className={
-                    type === ToolType.SHAPE
-                      ? `tool-item ${selectedToolClass}`
-                      : "tool-item"
-                  }
-                  onClick={() => {
-                    setType(ToolType.SHAPE);
-                  }}
-                >
-                  {toolShape}
-                </span>
+            <span title="Draw Shape" className="tool-Icon">
+              <span
+                className={
+                  type === ToolType.SHAPE
+                    ? `tool-item ${selectedToolClass}`
+                    : "tool-item"
+                }
+                onClick={() => {
+                  setType(ToolType.SHAPE);
+                }}
+              >
+                {toolShape}
               </span>
-            )}
+            </span>
             <span title="Eraser Tool" className="tool-Icon">
               <span
                 className={
@@ -88,22 +85,20 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
                 />
               </span>
             </span>
-            {!isPixel && (
-              <span title="Text" className="tool-Icon">
-                <span
-                  className={
-                    type === ToolType.TEXT
-                      ? `tool-item ${selectedToolClass}`
-                      : "tool-item"
-                  }
-                  onClick={() => {
-                    setType(ToolType.TEXT);
-                  }}
-                >
-                  {textIcon}
-                </span>
+            <span title="Text" className="tool-Icon">
+              <span
+                className={
+                  type === ToolType.TEXT
+                    ? `tool-item ${selectedToolClass}`
+                    : "tool-item"
+                }
+                onClick={() => {
+                  setType(ToolType.TEXT);
+                }}
+              >
+                {textIcon}
               </span>
-            )}
+            </span>
           </>
         )}
       </ToolTypeContext.Consumer>

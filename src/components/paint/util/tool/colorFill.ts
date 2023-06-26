@@ -1,7 +1,5 @@
-import Tool, { getMousePos, getTouchPos,setStraw, Point } from "./tool";
+import Tool, { getMousePos, getTouchPos,setStraw, Point, clacArea } from "./tool";
 import Color from "color";
-import { parseColorString } from "../colorChange";
-import { refresh, updatePixelBoxs } from "./pixelUtil";
 
 /**
  * 高效率的填充算法
@@ -11,56 +9,40 @@ const efficentFloodFill = (
   ctx: CanvasRenderingContext2D,
   startX: number,
   startY: number,
-  fillColor: number[]
+  fillColor: [number, number, number]
 ) => {
   // 保证 startX 和 startY 是正整数
   // 经测试，在触屏设备中 startX 和 startY 可能是小数，造成填充功能无法正确填充
   startX = Math.round(startX);
   startY = Math.round(startY);
-  const pixelStack: [number, number][] = [
-    [Math.round(startX), Math.round(startY)],
-  ];
+  const pixelStack: [number, number][] = [[Math.round(startX), Math.round(startY)]];
   const canvasWidth = ctx.canvas.width,
-  canvasHeight = ctx.canvas.height;
+    canvasHeight = ctx.canvas.height;
   const startPos = (startY * canvasWidth + startX) * 4;
   const colorLayer = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
-  const startColor: number[]= [
+  const startColor: [number, number, number] = [
     colorLayer.data[startPos],
     colorLayer.data[startPos + 1],
-    colorLayer.data[startPos + 2],
-    colorLayer.data[startPos + 3],
+    colorLayer.data[startPos + 2]
   ];
-  const updatedPoint: Record<string | number, boolean> = {};
 
-  if (
-    startColor[0] === fillColor[0] &&
-    startColor[1] === fillColor[1] &&
-    startColor[2] === fillColor[2] && 
-    startColor[3] === fillColor[3]
-  )
-    return;
-  //const newData = [];
+  if (startColor[0] === fillColor[0] && startColor[1] === fillColor[1] && startColor[2] === fillColor[2]) return;
   while (pixelStack.length > 0) {
     const newPos = pixelStack.pop() as [number, number];
+
     const x = newPos[0];
     let y = newPos[1];
+
     let pixelPos = (y * canvasWidth + x) * 4;
     while (y-- >= 0 && matchColor(colorLayer, pixelPos, startColor)) {
       pixelPos -= canvasWidth * 4;
     }
     pixelPos += canvasWidth * 4;
     ++y;
+
     let reachLeft = false,
       reachRight = false;
-
-    if (updatedPoint[pixelPos]) {
-      continue;
-    }
-    updatedPoint[pixelPos] = true
-    while (
-      y++ < canvasHeight - 1 &&
-      matchColor(colorLayer, pixelPos, startColor)
-    ) {
+    while (y++ < canvasHeight - 1 && matchColor(colorLayer, pixelPos, startColor)) {
       fillPixel(colorLayer, pixelPos, fillColor);
       if (x > 0) {
         if (matchColor(colorLayer, pixelPos - 4, startColor)) {
@@ -87,78 +69,46 @@ const efficentFloodFill = (
       pixelPos += canvasWidth * 4;
     }
   }
-       ctx.putImageData(colorLayer, 0, 0);
- if (Tool.isPixel) { 
-         updatePixelBoxs(Tool.ctx);
-        }
+
+  ctx.putImageData(colorLayer, 0, 0);
 };
 
 /**
  * 判断两个位置的像素颜色是否相同
  */
-const matchColor = (
-  colorLayer: ImageData,
-  pixelPos: number,
-  color: number[],
-) => {
+const matchColor = (colorLayer: ImageData, pixelPos: number, color: [number, number, number]) => {
   const r = colorLayer.data[pixelPos];
   const g = colorLayer.data[pixelPos + 1];
   const b = colorLayer.data[pixelPos + 2];
-  if (Tool.isPixel) {
-    return  (
-    Math.abs(r - color[0]) < 10 &&
-    Math.abs(g - color[1]) < 10 &&
-    Math.abs(b - color[2]) < 10
-  );
-  }
- 
-  return (
-    Math.abs(r - color[0]) < 30 &&
-    Math.abs(g - color[1]) < 30 &&
-    Math.abs(b - color[2]) < 30
-  );
+
+  return r === color[0] && g === color[1] && b === color[2];
 };
 
 /**
  * 修改指定ImageData的指定位置像素颜色
  */
-const fillPixel = (
-  colorLayer: ImageData,
-  pixelPos: number,
-  color:number[]| [number, number, number,number]
-) => {
-  
+const fillPixel = (colorLayer: ImageData, pixelPos: number, color: [number, number, number]) => {
   colorLayer.data[pixelPos] = color[0];
   colorLayer.data[pixelPos + 1] = color[1];
   colorLayer.data[pixelPos + 2] = color[2];
-  colorLayer.data[pixelPos + 3] = color[3]
+
   return colorLayer;
 };
 
 class ColorFill extends Tool {
-  mouseDownTimer: any;
   private operateStart(pos: Point) {
-    const showColor = parseColorString(Tool.strawColor || Tool.fillColor ||"#000000FF")
-    console.time("efficentFloodFill");
-    const colorArr: number[] = [showColor.r, showColor.g, showColor.b, showColor.a * 255]
-    Promise.resolve().then(() => { 
-      efficentFloodFill(Tool.ctx, pos.x, pos.y, colorArr);
-    })
-    console.timeEnd("efficentFloodFill");
+    setStraw(pos)
+    const color = new Color(Tool.strawColor ||Tool.fillColor);
+    efficentFloodFill(Tool.ctx, pos.x, pos.y, [color.red(), color.green(), color.blue()]);
   }
   public onMouseDown(event: MouseEvent): void {
     event.preventDefault();
-    if(this.mouseDownTimer) return 
-    const mousepos = getMousePos(Tool.ctx.canvas, event);    
-    setStraw(mousepos);
-    if (!Tool.strawFlag) { 
-            this.operateStart(mousepos);
+    const mousepos = getMousePos(Tool.ctx.canvas, event, 'colorFill');
+    if (clacArea(mousepos)) { 
+      this.operateStart(mousepos);
     }
-    this.mouseDownTimer = setTimeout(() => {
-      clearTimeout(this.mouseDownTimer);
-      this.mouseDownTimer = undefined;
-    }, 300);
   }
+
 
   public onTouchStart(event: TouchEvent): void {
     if (event.cancelable) {

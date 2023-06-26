@@ -1,7 +1,5 @@
 import { ColorType } from "../toolType";
-import { hexToRgba, } from "../colorChange";
 import Tool, { Point, getMousePos, setStraw, getTouchPos, hexToRgb,clacArea, updateImageData } from "./tool";
-import { drawColorToPixel, isPointInPath } from "./pixelUtil";
 
 class Pen extends Tool {
   protected lineWidthBase = 1;
@@ -13,37 +11,26 @@ class Pen extends Tool {
     x: 0,
     y: 0
   };
-  penColor: string ='' ;
   private operateStart(pos: Point) {
     if (!Tool.ctx) return;
-        setStraw(pos);
-  this.mouseDown = true;
+    setStraw(pos);
+    this.saveImageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
+    this.mouseDown = true;
     const showColor = Tool.strawColor
       ? Tool.strawColor
       : this.drawColorType === ColorType.MAIN
       ? Tool.mainColor
-        : Tool.subColor;
-    const testColor = hexToRgba(showColor)
-        this.previousPos = pos;
-    this.penColor = testColor
-    Tool.ctx.lineWidth = Tool.isPixel ? Tool.lineWidthFactor * this.lineWidthBase * Tool.OptPixel.size/2 : Tool.lineWidthFactor * this.lineWidthBase;
-    this.saveImageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
-    Tool.ctx.strokeStyle = testColor;
+      : Tool.subColor;
+    Tool.ctx.lineWidth = Tool.lineWidthFactor * this.lineWidthBase;
+    Tool.ctx.strokeStyle = showColor;
+
     Tool.ctx.lineJoin = "round";
     Tool.ctx.lineCap = "round";
     Tool.ctx.beginPath();
-    if (Tool.isPixel) { 
-       drawColorToPixel(pos, pos, this.penColor);
-    }
-    }
-    
+    this.previousPos = pos;
+  }
   private operateMove(pos: Point) {
     if (this.mouseDown) {
-      if (Tool.isPixel ) {
-        drawColorToPixel(this.previousPos, pos, this.penColor);
-        this.previousPos = pos;
-        return
-      } 
       Tool.ctx.moveTo(this.previousPos.x, this.previousPos.y);
       const c = 0.5 * (this.previousPos.x + pos.x);
       const d = 0.5 * (this.previousPos.y + pos.y);
@@ -56,25 +43,19 @@ class Pen extends Tool {
     if (this.mouseDown) {
       Tool.ctx.closePath();
       this.mouseDown = false;
-    //  let imageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
-    //    const showColor = Tool.strawColor
-    //   ? Tool.strawColor
-    //   : this.drawColorType === ColorType.MAIN
-    //   ? Tool.mainColor
-    //        : Tool.subColor;
-    //       const testColor = hexToRgba(showColor)
-    // const rgbaColor = parseColorString(testColor)
-    //   const colorRgb = hexToRgb(showColor);
-    //   if (colorRgb && this.saveImageData) {
-    //     imageData = updateImageData(this.saveImageData, imageData, [colorRgb.r, colorRgb.g, colorRgb.b, 0.5]);
-    //     Tool.ctx.putImageData(imageData, 0, 0);
-    //   }
+      let imageData = Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height);
+      const colorRgb = hexToRgb(this.drawColorType === ColorType.MAIN ? Tool.mainColor : Tool.subColor);
+      if (colorRgb && this.saveImageData) {
+        imageData = updateImageData(this.saveImageData, imageData, [colorRgb.r, colorRgb.g, colorRgb.b, colorRgb.a]);
+
+        Tool.ctx.putImageData(imageData, 0, 0);
+      }
     }
   }
-  
   public onMouseDown(event: MouseEvent): void {
     event.preventDefault();
     const mousePos = getMousePos(Tool.ctx.canvas, event);
+    
     if (clacArea(mousePos)) { 
     this.operateStart(mousePos);
     }
@@ -89,7 +70,9 @@ class Pen extends Tool {
   public onMouseMove(event: MouseEvent): void {
     event.preventDefault();
     const mousePos = getMousePos(Tool.ctx.canvas, event);
+     if (clacArea(mousePos)) { 
     this.operateMove(mousePos);
+    }
   }
 
   public onTouchStart(event: TouchEvent): void {
@@ -97,7 +80,10 @@ class Pen extends Tool {
       event.preventDefault();
     }
     const touchPos = getTouchPos(event.target as HTMLCanvasElement, event);
+      if (clacArea(touchPos)) { 
     this.operateStart(touchPos);
+    }
+    //this.operateStart(touchPos);
   }
 
   public onTouchMove(event: TouchEvent): void {
@@ -105,7 +91,10 @@ class Pen extends Tool {
       event.preventDefault();
     }
     const touchPos = getTouchPos(event.target as HTMLCanvasElement, event);
+      if (clacArea(touchPos)) { 
     this.operateMove(touchPos);
+    }
+   // this.operateMove(touchPos);
   }
 
   public onTouchEnd(event: TouchEvent): void {

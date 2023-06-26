@@ -4,10 +4,12 @@ import { ColorType, LineWidthType, ShapeOutlineType, ShapeToolType, ToolType } f
 
 export const ToolTypeContext = createContext({
   type: ToolType.PEN,
-  setType: (type: ToolType) => {},
-
-  strawType: false,
-  setStrawType: (type: boolean) => {}
+  setType: (type: ToolType) => { },
+  
+  strawType:false,
+  setStrawType: (type:boolean ) => { 
+    
+  }
 });
 
 export const ShapeTypeContext = createContext({
@@ -19,6 +21,7 @@ export const ShapeOutlineContext = createContext({
   type: ShapeOutlineType.SOLID,
   setType: (type: ShapeOutlineType) => {}
 });
+
 
 export const LineWidthContext = createContext({
   type: LineWidthType.LINESIZE,
@@ -49,9 +52,8 @@ export const SizeContext = createContext({
   onSize: (type: any) => {}
 });
 
+
 export const TextContext = createContext({
-  fontStyle: {
-    fontSize: 72
-  },
-  setFont: (type: any) => {}
+    fontStyle: {},
+    setFont: (type: any) => { }
 });
