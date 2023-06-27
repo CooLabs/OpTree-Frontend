@@ -25,6 +25,8 @@ export type NewCollectionCreateds = {
   collInfoURI: string
   collectionId: string
   collectionOwner: string
+  profileId: string
+  pubId: string
   derivedRuleModule: string
   derivedCollectionAddr: string
   detailJson: DetailJson
@@ -53,6 +55,8 @@ export const newCollectionCreatedsDoc = gql`
       collInfoURI
       collectionId
       collectionOwner
+      profileId
+      pubId
       derivedRuleModule
       derivedCollectionAddr
     }    
@@ -89,7 +93,7 @@ export const getNewCollectionCreated = async (size:number, offset:number)=>{
   let response: {data: {newCollectionCreateds: NewCollectionCreateds[]}} = await client.query({query: newCollectionCreatedsDoc})
   console.log('getNewCollectionCreated response',response)
   let collections = await Promise.all(response.data.newCollectionCreateds.map(async (collection: NewCollectionCreateds) => {
-    if(parseInt(collection.collectionId) < 4) return
+    if(parseInt(collection.collectionId) < 8) return
     let url = sanitizeDStorageUrl(collection.collInfoURI);
     let json: any = await getReq(url)
     return {...collection, detailJson: json}

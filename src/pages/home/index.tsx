@@ -14,7 +14,8 @@ const Home = () => {
       <Home1 />
       <Home2 />
       <Home3 />
-      <Home5 />
+      <Home4 />
+      {/* <Home5 /> */}
       <Home6 />
     </>
   );

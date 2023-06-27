@@ -61,7 +61,7 @@ const CreateCollection = (props:Props) => {
     {
       type: 'uploadPic',
       title: 'Featured image',
-      des: "This image will be used to showcase your collection on homepage. 626x372 recommended.",
+      des: "This image will be used to showcase your collection on homepage. 372x372 recommended.",
       formParams: { fieldName: 'featured', fieldName1: 'featured1' },
       contentParams: { picture: featured, updataFunc: setFeatured, handleSelectImage },
       isRequired: true,

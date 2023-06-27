@@ -6,6 +6,7 @@ import HomePic3 from '@/assets/images/home/home_4_3.png'
 import HomePic4 from '@/assets/images/home/home_4_4.png'
 import HomePic5 from '@/assets/images/home/home_4_5.svg'
 import HomePic6 from '@/assets/images/home/home_4_6.png'
+import { Link } from "react-router-dom";
 
 const Home4 = () => {
 
@@ -18,17 +19,17 @@ const Home4 = () => {
     {icon: HomePic3, title: 'Intergrate Lens Protocol', des: 'Intergrate lens protocol,All works be recorded though lens protocol.'}]
 
     return (
-      <div className="section-4 margin-top-100">
+      <div className="section-4 margin-top-60">
         <h1 className="margin-top-20">Features for everyone need</h1>
-        <div className="margin-top-40">
+        <div className="margin-top-60">
            <div className="align-start">
             {
               data1.map((item, index)=>{
                 return <div key={`1-`+index} className="flex-column-center flex1">
-                  <img src={item.icon}></img>
-                  <h4>{item.title}</h4>
-                  <h5>{item.des}</h5>
-                </div>
+                    <img src={item.icon}></img>
+                    <h4>{item.title}</h4>
+                    <h5>{item.des}</h5>
+                  </div>
               })
             }
            </div>

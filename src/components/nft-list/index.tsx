@@ -103,10 +103,10 @@ function NFTList(props: Props) {
             ></div>
             {collapseBlurb ? <DoubleRightOutlined rotate={isBlurbOpen ? 270 : 90} onClick={() => setIsBlurbOpen(!isBlurbOpen)} /> : ''} */}
             <div className='flex-20 margin-top-10'>
-              <a href={`https://testnet.lenster.xyz/${selectedChannel?'u/'+selectedChannel.handle:''}`} target='_blank'>
+              <a href={`https://testnet.lenster.xyz/posts/0x${parseInt(collectionInfo.profileId).toString(16)}-0x${(Array(2).join('0') + parseInt(collectionInfo.pubId).toString(16)).slice(-2)}`} target='_blank'>
                 <img className='lenster' src={Lenster}></img>
               </a>
-              <a href={`https://testnets.opensea.io/collection/${collectionInfo.detailJson.name.toLocaleLowerCase()}`} target='_blank'>
+              <a href={`https://testnets.opensea.io/assets/mumbai/${collectionInfo.derivedCollectionAddr}`} target='_blank'>
                 <img className='lenster' src={Opensea}></img>
               </a>
             </div>
