@@ -164,7 +164,7 @@ const ForkPaintNFT = (props) => {
         referenceModuleInitData: [],
       }
       console.log('writePostContract args', args)
-      setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
+      // setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       return  writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
     } catch (e){
       console.error('e',e) 
