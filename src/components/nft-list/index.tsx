@@ -16,7 +16,7 @@ import AddNft from './add-nft';
 import useChannelStore from '@/lib/store/channel';
 import { Profile } from '@/lens';
 import { OPTREE_PROXY_ADDRESS, POLYGON_CHAIN_ID } from '@/utils/constants';
-import { useBalance } from 'wagmi';
+import { Address, useBalance } from 'wagmi';
 
 interface Props {
   id: string
@@ -43,10 +43,11 @@ function NFTList(props: Props) {
   )
 
   const { data: userBalance } = useBalance({
-    address: OPTREE_PROXY_ADDRESS,
+    address: collectionInfo?.derivedCollectionAddr as Address,
     chainId: POLYGON_CHAIN_ID,
     watch: true
   })
+  
 
   useEffect(() => {
     if (blurbElement?.clientHeight > 110) {
