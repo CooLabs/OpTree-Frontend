@@ -23,12 +23,14 @@ import trimify from '@/utils/functions/trimify'
 import {storeBlob, storeCar} from '@/utils/functions/uploadToStorage'
 import { v4 as uuidv4 } from 'uuid'
 import {
+  useContractRead,
   useContractWrite} from 'wagmi'
 
 import Details, { CollectionFormData } from './detail'
 import { getTimeAddedFewDays, getTimeAddedOneDayTime } from '@/utils/functions/formatTime'
 import { useHistory } from 'react-router'
 import useOpenNotification from '@/components/hooks/useNotification'
+import userDispatcher from '@/components/hooks/userDispather'
 
 const UploadSteps = () => {
   const history = useHistory()
@@ -104,20 +106,7 @@ const UploadSteps = () => {
       console.log('onSettled data', data)
     }
   })
-
-  const { write: setDispatcher } = useContractWrite({
-    address: LENS_HUB_ADDRESS,
-    abi: LENSHUB_PROXY_ABI,
-    functionName: 'setDispatcher',
-    mode: 'recklesslyUnprepared',
-    onSuccess: (data) => {
-      console.log('onSuccess data', data) 
-    },
-    onError: (error: CustomErrorWithData)=>{
-      openNotificationWithIcon('error', 'Error', error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-    }
-  })
- 
+  
   const createPublication = async ({
     imageSource
   }: {
@@ -196,7 +185,6 @@ const UploadSteps = () => {
         referenceModuleInitData: []
       }
       console.log('writePostContract args', args)
-      //setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       return  writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
     } catch (e){
       console.error('e',e) 
@@ -232,7 +220,8 @@ const UploadSteps = () => {
     }
   }
 
-  
+  const {toSetDispatcher} = userDispatcher(selectedChannel?.id,uploadImageToIpfs, onError)
+
   const onUpload = async (data: CollectionFormData) => {
     uploadedImage.title = data.title
     uploadedImage.description = data.description
@@ -247,7 +236,15 @@ const UploadSteps = () => {
         imageSource: uploadedImage.imageSource
       })
     }
-    await uploadImageToIpfs()
+    let res = toSetDispatcher()
+    if (res)
+      setUploadedImage({
+        buttonText: `Setting dispatcher`,
+        loading: true
+      })
+    else
+      await uploadImageToIpfs()
+    
   }
 
   return (

@@ -207,14 +207,14 @@ export const renderFormItem = (type: string, formParams, contentParams, child) =
 export const renderFormItemContent = (item: FormType) => {
   if (item.type === 'submit') {
     return (
-      <>
+      <div key={item.type}>
         <div className="divider margin-top-40"></div>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 0 }} className="margin-top-40">
           <Button className="create-btn" htmlType="submit" {...item.contentParams}>
             {item.contentParams['name']}
           </Button>
         </Form.Item>
-      </>
+      </div>
     );
   }else if (item.type === 'setting'){
     const SettingSvg = getSvgIcon('SettingSvg');
@@ -230,13 +230,13 @@ export const renderFormItemContent = (item: FormType) => {
     )
   }
   return (
-    <>
+    <div key={item.title}>
       <div className={`${item.isRequired ? 'required-field' : ''} title margin-top-40`}>
         {item.title}
       </div>
       {item.des && <div className="tip margin-top-10">{item.des}</div>}
       {renderFormItem(item.type, item.formParams, item.contentParams, item.child)}
       {item.child && item.child.show && item.child?.childContent?.map(it=>renderFormItemContent(it))}
-    </>
+    </div>
   );
 };

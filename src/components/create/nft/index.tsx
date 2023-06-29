@@ -22,6 +22,7 @@ import {useContractWrite} from 'wagmi'
 import CreatNFT, { NFTFormData } from './detail'
 import { useHistory } from 'react-router'
 import useOpenNotification from '@/components/hooks/useNotification'
+import userDispatcher from '@/components/hooks/userDispather'
 
 const CreateNewNFT = (props) => {
   const params = props.match.params;
@@ -31,7 +32,7 @@ const CreateNewNFT = (props) => {
   const [buttonState, setButtonState] = useState({text: 'Post Image', loading: false})
   const selectedChannel = useChannelStore((state) => state.selectedChannel)
   const {contextHolder, openNotificationWithIcon} = useOpenNotification()
- 
+  const [formData, setFormData] = useState<NFTFormData>()
   const redirectToCollection = () => {
     //router.push('/explore')
     history.push(`/collections/${id}/${collectionId}`)
@@ -101,7 +102,6 @@ const CreateNewNFT = (props) => {
     data: NFTFormData
   }) => {
     try {
-      //setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       setButtonState({
         text: `Storing metadata`,
         loading: true
@@ -153,7 +153,6 @@ const CreateNewNFT = (props) => {
         referenceModuleInitData: [],
       }
       console.log('writePostContract args', args)
-      // setDispatcher?.({ recklesslySetUnpreparedArgs: [selectedChannel?.id, OPTREE_PROXY_ADDRESS] })
       return  writePostContract?.({ recklesslySetUnpreparedArgs: [args] })
     } catch (e){
       console.error('e',e) 
@@ -189,10 +188,26 @@ const CreateNewNFT = (props) => {
       reader.readAsArrayBuffer(data.featured);
     }
   }
-  
-  const onUpload = async (data: NFTFormData) => {
-    await uploadImageToIpfs( data)
+
+  const uploadToContract = async ()=>{
+    if (formData){
+      await uploadImageToIpfs(formData)
+    }
   }
+  const {toSetDispatcher} = userDispatcher(selectedChannel?.id, uploadToContract, onError)
+  const onUpload = async (data: NFTFormData) => {
+    setFormData(data)
+    let res = toSetDispatcher()
+    if (res)
+      setButtonState({
+        text: `Setting dispatcher`,
+          loading: true
+        })
+    else{
+      await uploadImageToIpfs( data)
+    }    
+  }
+  
 
   return (
     <>
